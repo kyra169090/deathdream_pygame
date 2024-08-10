@@ -1,0 +1,26 @@
+{
+    "scenes": [
+        {
+            "name": "location1",
+            "background": "assets/images/scenes/location1/location1_abandoned_city_1_1.jpg",
+            "box_position": {
+                "x": 1400,
+                "y": 499,
+                "width": 80,
+                "height": 50
+            },
+            "next_scene": 2
+        },
+        {
+            "name": "location2",
+            "background": "assets/images/scenes/location2/location2_abandoned_city_1_1.jpg",
+            "box_position": {
+                "x": 20,
+                "y": 499,
+                "width": 80,
+                "height": 50
+            },
+            "next_scene": 1
+        }
+    ]
+}
