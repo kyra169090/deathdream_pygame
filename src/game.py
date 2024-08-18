@@ -1,41 +1,41 @@
 import pygame
 import sys
-from scenes import load_scenes
+from scenes import start_scene
+from inventory import Inventory
+
 
 class Game:
     def __init__(self):
         pygame.init()
-
-        # Constants
-        self.WIDTH, self.HEIGHT = 1500, 1024
-        self.BLACK = (0, 0, 0)
+        self.WIDTH = 1500
+        self.HEIGHT = 1024
 
         # Screen setup
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption('Deathdream')
-
-        # Load scenes from JSON
-        self.scenes = load_scenes(self.WIDTH, self.HEIGHT)
-        self.current_scene_index = 0  # Start with the first scene
+        # Start with location1
+        self.current_scene = start_scene
+        self.inventory = Inventory()
 
     def run(self):
-        while True:
+        running = True
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
-                    current_scene = self.scenes[self.current_scene_index]
-                    if current_scene["box"].collidepoint(mouse_pos):
-                        self.current_scene_index = current_scene["next_scene"] - 1
+                    # Check for interactions with boxes
+                    for box in self.current_scene.boxes:
+                        if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(mouse_pos):
+                            self.current_scene = box.next_scene
+                            break
+                    # Check for interactions with objects
+                    for obj in self.current_scene.objects:
+                        if obj.rect.collidepoint(mouse_pos):
+                            obj.interact(self.inventory)
+                            break
 
-            # Drawing the current scene
-            self.draw_scene()
+            self.current_scene.render(self.screen, self.inventory)
 
-            pygame.display.flip()
-
-    def draw_scene(self):
-        current_scene = self.scenes[self.current_scene_index]
-        self.screen.blit(current_scene["background_image"], (0, 0))
-        pygame.draw.rect(self.screen, self.BLACK, current_scene["box"])
+        pygame.quit()
