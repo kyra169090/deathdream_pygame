@@ -17,9 +17,9 @@ class Inventory:
         return any(item.name == item_name for item in self.items)
 
     def render(self, screen):
-        # Optionally, render the inventory on the screen
-        # For example, as a list of images/icons
-        x_offset = 10
+        # Rendering the inventory in an upper bar, as a list of images
+        x = 20
+        y = 5
         for item in self.items:
-            screen.blit(item.image, (x_offset, 10))
-            x_offset += item.image.get_width() + 10
+            item.render(screen, x, y)
+            x += 130  # space between items

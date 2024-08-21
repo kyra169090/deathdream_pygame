@@ -20,6 +20,7 @@ class Game:
     def run(self):
         running = True
         while running:
+            # The Pygame event loop (for a point&click mousedown is enough)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False

@@ -16,7 +16,7 @@ class Node:
             # Create a transparent surface
             transparent_surface = pygame.Surface((box.width, box.height), pygame.SRCALPHA)
             # Fill the surface with a black color and set its transparency
-            transparent_surface.fill((0, 0, 0, 70))  # Adjust the 50 for more or less transparency
+            transparent_surface.fill((0, 0, 0, 100))  # Adjust the 50 for more or less transparency
             # Blit the transparent surface onto the screen at the box's position
             screen.blit(transparent_surface, (box.x, box.y))
 
@@ -47,10 +47,58 @@ class Start(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=1270, y=650, width=220, height=200, next_scene=None),
-            Box(x=600, y=900, width=400, height=140, next_scene=None)  
+            Box(x=600, y=900, width=400, height=140, next_scene=None),
+            Box(x=400, y=600, width=300, height=140, next_scene=None)  
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
+
+# first house
+class CityPart1Door(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=700, y=300, width=250, height=650, next_scene=None),
+            Box(x=000, y=900, width=400, height=150, next_scene=None) 
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart1Corridor(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            #door to living room
+            Box(x=970, y=350, width=150, height=220, next_scene=None),
+            #door to pantry
+            Box(x=700, y=350, width=120, height=400, next_scene=None),
+            #going back
+            Box(x=600, y=900, width=550, height=150, next_scene=None)            
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart1LivingRoom(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=600, y=900, width=550, height=150, next_scene=None)           
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart1Pantry(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=300, y=900, width=550, height=120, next_scene=None)           
+        ]
+        self.objects = [
+            GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
 
 # way to the shop
 class CityPart2(Node):
@@ -100,6 +148,10 @@ class CityPart3(Node):
 
 # Initialize scenes with the appropriate images
 start_scene = Start(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_1.jpg'))
+city_part1_door = CityPart1Door(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_2.jpg'))
+city_part1_corridor = CityPart1Corridor(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_3.jpg'))
+city_part1_livingroom = CityPart1LivingRoom(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_4.jpg'))
+city_part1_pantry = CityPart1Pantry(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_5.jpg'))
 city_part2 = CityPart2(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_1_1.jpg'))
 city_part2_shop = CityPart2Shop(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_1_2.jpg'))
 city_part2_shop_shelf = CityPart2ShopShelf(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_shelf.jpg'))
@@ -110,6 +162,14 @@ city_part3 = CityPart3(pygame.image.load('../assets/images/scenes/location3/city
 # Link scenes to boxes (after they are created)
 start_scene.boxes[0].next_scene = city_part2
 start_scene.boxes[1].next_scene = city_part3
+start_scene.boxes[2].next_scene = city_part1_door
+city_part1_door.boxes[0].next_scene = city_part1_corridor
+city_part1_door.boxes[1].next_scene = start_scene
+city_part1_corridor.boxes[0].next_scene = city_part1_livingroom
+city_part1_corridor.boxes[1].next_scene = city_part1_pantry
+city_part1_corridor.boxes[2].next_scene = city_part1_door
+city_part1_pantry.boxes[0].next_scene = city_part1_corridor
+city_part1_livingroom.boxes[0].next_scene = city_part1_corridor
 city_part2.boxes[0].next_scene = start_scene
 city_part2.boxes[1].next_scene = city_part2_shop
 city_part2_shop.boxes[0].next_scene = city_part2

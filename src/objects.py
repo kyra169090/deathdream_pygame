@@ -7,9 +7,13 @@ class GameObject:
         self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = pygame.Rect(x, y, width, height)
         self.interactable = interactable
+        self.inventory_image = pygame.transform.scale_by(self.image, 0.5)
 
-    def render(self, screen):
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+    def render(self, screen, x=None, y=None):
+        if x is not None and y is not None:
+            screen.blit(self.inventory_image, (x, y))
+        else:
+            screen.blit(self.image, self.rect.topleft)
 
     def interact(self, inventory):
         if self.interactable:
