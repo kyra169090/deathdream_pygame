@@ -13,16 +13,19 @@ class Game:
         # Screen setup
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption('Deathdream')
+        # Music
         pygame.mixer.init()
+        pygame.mixer.music.load('../assets/sounds/background_music.mp3')
+        pygame.mixer.music.play(-1)
+
         # Start with location1
         self.current_scene = start_scene
         self.inventory = Inventory()
+        
 
     def run(self):
         running = True
         selected_item = None
-        #sound = pygame.mixer.Sound('../assets/sounds/background_music.mp3')
-        #sound.play()
 
         while running:
             # The Pygame event loop (for a point&click mousedown is enough)
