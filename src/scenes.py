@@ -10,12 +10,6 @@ class Node:
         self.objects = []
         self.slots = []
 
-    def use_lightbulb(self):
-        # Putting lightbulb sound here
-        # Change the background image to show the lit room
-        if self.lit_background_image:
-            self.background_image = self.lit_background_image
-
     def render(self, screen, inventory):
         # Draw background image
         screen.blit(self.background_image, (0, 0))
@@ -114,7 +108,7 @@ class CityPart1Pantry(Node):
 
          # Define a slot where the lightbulb can be used
         self.slots = [
-            Slot(x=50, y=50, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
+            Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
         ]
         self.boxes = [
             Box(x=300, y=900, width=550, height=120, next_scene=None)           
@@ -123,6 +117,7 @@ class CityPart1Pantry(Node):
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200)
         ]
     def use_lightbulb(self):
+        # Putting lightbulb sound here
         # Change the background image to show the lit room
         if self.lit_background_image:
             self.background_image = self.lit_background_image

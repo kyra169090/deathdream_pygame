@@ -34,11 +34,7 @@ class Game:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
-                    # Check for interactions with boxes
-                    for box in self.current_scene.boxes:
-                        if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(mouse_pos):
-                            self.current_scene = box.next_scene
-                            break
+
                     # Check for interactions with objects
                     for obj in self.current_scene.objects:
                         if obj.rect.collidepoint(mouse_pos):
@@ -57,6 +53,12 @@ class Game:
                             if slot.try_use_item(selected_item, self.inventory):
                                 selected_item = None  # Clear selection if the item is used
                                 break
+
+                    # Check for interactions with boxes
+                    for box in self.current_scene.boxes:
+                        if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(mouse_pos):
+                            self.current_scene = box.next_scene
+                            break
 
             self.current_scene.render(self.screen, self.inventory)
 
