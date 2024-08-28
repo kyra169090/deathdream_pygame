@@ -3,10 +3,18 @@ from objects import GameObject
 from inventory import Inventory
 
 class Node:
-    def __init__(self, background_image):
+    def __init__(self, background_image, lit_background_image=None):
         self.background_image = background_image
+        self.lit_background_image = lit_background_image  # Background after lightbulb is used
         self.boxes = []
         self.objects = []
+        self.slots = []
+
+    def use_lightbulb(self):
+        # Putting lightbulb sound here
+        # Change the background image to show the lit room
+        if self.lit_background_image:
+            self.background_image = self.lit_background_image
 
     def render(self, screen, inventory):
         # Draw background image
@@ -25,10 +33,23 @@ class Node:
             if obj.interactable:  # Only draw objects that haven't been picked up
                 obj.render(screen)
 
-        # Render inventory
         inventory.render(screen)
 
         pygame.display.flip()
+
+class Slot:
+    def __init__(self, x, y, width, height, required_item, action):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.required_item = required_item  # Name of the item required for this slot
+        self.action = action  # Function to call when the correct item is used
+
+    def try_use_item(self, item, inventory):
+        # Check if the item is the required one and use it if so
+        if item.name == self.required_item:
+            self.action()  # Trigger the action (e.g., turn on light)
+            inventory.remove_item(item)  # Remove item from inventory
+            return True
+        return False
 
 class Box:
     def __init__(self, x, y, width, height, next_scene=None):
@@ -88,14 +109,23 @@ class CityPart1LivingRoom(Node):
         super().render(screen, inventory)
 
 class CityPart1Pantry(Node):
-    def __init__(self, background_image):
-        super().__init__(background_image)
+    def __init__(self, background_image, lit_background_image):
+        super().__init__(background_image, lit_background_image)
+
+         # Define a slot where the lightbulb can be used
+        self.slots = [
+            Slot(x=50, y=50, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
+        ]
         self.boxes = [
             Box(x=300, y=900, width=550, height=120, next_scene=None)           
         ]
         self.objects = [
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200)
         ]
+    def use_lightbulb(self):
+        # Change the background image to show the lit room
+        if self.lit_background_image:
+            self.background_image = self.lit_background_image
     def render(self, screen, inventory):
         super().render(screen, inventory)
 
@@ -151,7 +181,7 @@ start_scene = Start(pygame.image.load('../assets/images/scenes/location1/locatio
 city_part1_door = CityPart1Door(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_2.jpg'))
 city_part1_corridor = CityPart1Corridor(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_3.jpg'))
 city_part1_livingroom = CityPart1LivingRoom(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_4.jpg'))
-city_part1_pantry = CityPart1Pantry(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_5.jpg'))
+city_part1_pantry = CityPart1Pantry(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_5_dark.jpg'), pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_5.jpg'))
 city_part2 = CityPart2(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_1_1.jpg'))
 city_part2_shop = CityPart2Shop(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_1_2.jpg'))
 city_part2_shop_shelf = CityPart2ShopShelf(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_shelf.jpg'))

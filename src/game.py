@@ -13,12 +13,17 @@ class Game:
         # Screen setup
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption('Deathdream')
+        pygame.mixer.init()
         # Start with location1
         self.current_scene = start_scene
         self.inventory = Inventory()
 
     def run(self):
         running = True
+        selected_item = None
+        #sound = pygame.mixer.Sound('../assets/sounds/background_music.mp3')
+        #sound.play()
+
         while running:
             # The Pygame event loop (for a point&click mousedown is enough)
             for event in pygame.event.get():
@@ -36,6 +41,19 @@ class Game:
                         if obj.rect.collidepoint(mouse_pos):
                             obj.interact(self.inventory)
                             break
+
+                    # Handle item selection from the inventory
+                    if event.button == 1:  # Left-click
+                        for item in self.inventory.items:
+                            if item.rect.collidepoint(mouse_pos):
+                                selected_item = item
+                                break
+                    # Handle interaction with slots
+                    for slot in self.current_scene.slots:
+                        if slot.rect.collidepoint(mouse_pos) and selected_item:
+                            if slot.try_use_item(selected_item, self.inventory):
+                                selected_item = None  # Clear selection if the item is used
+                                break
 
             self.current_scene.render(self.screen, self.inventory)
 

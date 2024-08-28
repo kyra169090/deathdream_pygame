@@ -18,7 +18,7 @@ class Inventory:
 
     def render(self, screen):
         # Rendering the inventory in an upper bar, as a list of images
-        x = 20
+        x = 100
         y = 5
         for item in self.items:
             item.render(screen, x, y)
