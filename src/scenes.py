@@ -1,6 +1,7 @@
 import pygame
 from objects import GameObject
 from inventory import Inventory
+from slots_n_boxes import Slot, Box
 
 class Node:
     def __init__(self, background_image, lit_background_image=None):
@@ -18,7 +19,7 @@ class Node:
             # Create a transparent surface
             transparent_surface = pygame.Surface((box.width, box.height), pygame.SRCALPHA)
             # Fill the surface with a black color and set its transparency
-            transparent_surface.fill((0, 0, 0, 100))  # Adjust the 50 for more or less transparency
+            transparent_surface.fill((0, 0, 0, 0))  # Adjust the 50 for more or less transparency
             # Blit the transparent surface onto the screen at the box's position
             screen.blit(transparent_surface, (box.x, box.y))
 
@@ -29,41 +30,14 @@ class Node:
 
         inventory.render(screen)
 
-        pygame.display.flip()
-
-class Slot:
-    def __init__(self, x, y, width, height, required_item, action):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.required_item = required_item  # Name of the item required for this slot
-        self.action = action  # Function to call when the correct item is used
-
-    def try_use_item(self, item, inventory):
-        # Check if the item is the required one and use it if so
-        if item.name == self.required_item:
-            self.action()  # Trigger the action (e.g., turn on light)
-            inventory.remove_item(item)  # Remove item from inventory
-            return True
-        return False
-
-class Box:
-    def __init__(self, x, y, width, height, next_scene=None):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.next_scene = next_scene
-
-    def click(self):
-        if self.next_scene:
-            self.next_scene.render()
 
 class Start(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
             Box(x=1270, y=650, width=220, height=200, next_scene=None),
-            Box(x=600, y=900, width=400, height=140, next_scene=None),
-            Box(x=400, y=600, width=300, height=140, next_scene=None)  
+            Box(x=50, y=900, width=400, height=100, next_scene=None),
+            Box(x=600, y=600, width=200, height=140, next_scene=None)  
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -111,7 +85,7 @@ class CityPart1Pantry(Node):
             Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
         ]
         self.boxes = [
-            Box(x=300, y=900, width=550, height=120, next_scene=None)           
+            Box(x=30, y=900, width=550, height=90, next_scene=None)           
         ]
         self.objects = [
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200)
@@ -130,7 +104,7 @@ class CityPart2(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=600, y=900, width=500, height=120, next_scene=None),
+            Box(x=300, y=900, width=600, height=120, next_scene=None),
             Box(x=810, y=615, width=180, height=150, next_scene=None)  
         ]
     def render(self, screen, inventory):

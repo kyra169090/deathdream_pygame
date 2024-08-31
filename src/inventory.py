@@ -13,9 +13,6 @@ class Inventory:
             self.items.remove(item)
             print(f"Item {item.name} removed from inventory.")
 
-    def has_item(self, item_name):
-        return any(item.name == item_name for item in self.items)
-
     def render(self, screen):
         # Rendering the inventory in an upper bar, as a list of images
         x = 100
