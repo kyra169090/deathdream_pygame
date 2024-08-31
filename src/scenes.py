@@ -87,13 +87,23 @@ class CityPart1Pantry(Node):
             Box(x=0, y=910, width=550, height=110, next_scene=None)           
         ]
         self.objects = [
-            GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200)
+            GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200, interactable=False)
         ]
+        pygame.mixer.init() 
+        self.lightbulb_sound = pygame.mixer.Sound('../assets/sounds/lightbulb_sound.mp3')
+
     def use_lightbulb(self):
-        # Putting lightbulb sound here
         # Change the background image to show the lit room
         if self.lit_background_image:
+            self.lightbulb_sound.play()
+            pygame.time.delay(2000)
             self.background_image = self.lit_background_image
+
+            # Make the crowbar interactable now
+            for obj in self.objects:
+                if obj.name == "Crowbar":
+                    obj.interactable = True
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
 
@@ -139,7 +149,7 @@ class CityPart3(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=600, y=900, width=550, height=150, next_scene=None),
+            Box(x=500, y=900, width=950, height=150, next_scene=None),
             Box(x=860, y=600, width=200, height=150, next_scene=None)  
         ]
     def render(self, screen, inventory):
@@ -158,14 +168,17 @@ class CityPart3Door(Node):
             Box(x=300, y=930, width=900, height=70, next_scene=None)  
         ]
         self.new_box = None  # Placeholder for the new box
+        pygame.mixer.init() 
+        self.door_crowbar_sound = pygame.mixer.Sound('../assets/sounds/door_with_crowbar.mp3')
 
     def use_crowbar(self):
-        # Putting cracking sound here
         # you can enter house after using the crowbar
         if not self.isOpen:
+            self.door_crowbar_sound.play()
+            pygame.time.delay(1000)
             self.isOpen = True
             self.add_new_box()
-            print("Door is now open")
+
 
     def add_new_box(self):
         # Add the new box and set its next scene
