@@ -12,14 +12,13 @@ class Node:
         self.slots = []
 
     def render(self, screen, inventory):
-        # Draw background image
         screen.blit(self.background_image, (0, 0))
         # Draw boxes
         for box in self.boxes:
             # Create a transparent surface
             transparent_surface = pygame.Surface((box.width, box.height), pygame.SRCALPHA)
             # Fill the surface with a black color and set its transparency
-            transparent_surface.fill((0, 0, 0, 0))  # Adjust the 50 for more or less transparency
+            transparent_surface.fill((0, 0, 0, 0))  # Adjust the last value for more or less transparency
             # Blit the transparent surface onto the screen at the box's position
             screen.blit(transparent_surface, (box.x, box.y))
 
@@ -36,7 +35,7 @@ class Start(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=1270, y=650, width=220, height=200, next_scene=None),
-            Box(x=50, y=900, width=400, height=100, next_scene=None),
+            Box(x=00, y=900, width=600, height=100, next_scene=None),
             Box(x=600, y=600, width=200, height=140, next_scene=None)  
         ]
     def render(self, screen, inventory):
@@ -71,7 +70,7 @@ class CityPart1LivingRoom(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=600, y=900, width=550, height=150, next_scene=None)           
+            Box(x=300, y=930, width=800, height=100, next_scene=None)           
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -85,7 +84,7 @@ class CityPart1Pantry(Node):
             Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
         ]
         self.boxes = [
-            Box(x=30, y=900, width=550, height=90, next_scene=None)           
+            Box(x=0, y=910, width=550, height=110, next_scene=None)           
         ]
         self.objects = [
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200)
@@ -104,7 +103,7 @@ class CityPart2(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=300, y=900, width=600, height=120, next_scene=None),
+            Box(x=300, y=900, width=700, height=120, next_scene=None),
             Box(x=810, y=615, width=180, height=150, next_scene=None)  
         ]
     def render(self, screen, inventory):
@@ -140,7 +139,63 @@ class CityPart3(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=600, y=900, width=550, height=150, next_scene=None)  
+            Box(x=600, y=900, width=550, height=150, next_scene=None),
+            Box(x=860, y=600, width=200, height=150, next_scene=None)  
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+
+# creepy house with locked door
+class CityPart3Door(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.isOpen = False  # Initialize the door as closed
+        self.slots = [
+            Slot(x=920, y=480, width=270, height=430, required_item="Crowbar", action=self.use_crowbar)
+        ]
+        self.boxes = [
+            Box(x=300, y=930, width=900, height=70, next_scene=None)  
+        ]
+        self.new_box = None  # Placeholder for the new box
+
+    def use_crowbar(self):
+        # Putting cracking sound here
+        # you can enter house after using the crowbar
+        if not self.isOpen:
+            self.isOpen = True
+            self.add_new_box()
+            print("Door is now open")
+
+    def add_new_box(self):
+        # Add the new box and set its next scene
+        if self.isOpen and not self.new_box:
+            self.new_box = Box(x=920, y=480, width=270, height=430, next_scene=city_part3_corridor)
+            self.boxes.append(self.new_box)
+
+    def render(self, screen, inventory):
+        # If the door is open, add the extra box
+        if self.isOpen and not self.new_box:
+            self.add_new_box()
+        super().render(screen, inventory)
+
+# creepy house corridor
+class CityPart3Corridor(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=400, y=900, width=900, height=100, next_scene=None),
+            Box(x=900, y=400, width=200, height=200, next_scene=None)  
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+# creepy house last room
+class CityPart3Room(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=200, y=900, width=1000, height=110, next_scene=None) 
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -155,8 +210,9 @@ city_part2 = CityPart2(pygame.image.load('../assets/images/scenes/location2/loca
 city_part2_shop = CityPart2Shop(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_1_2.jpg'))
 city_part2_shop_shelf = CityPart2ShopShelf(pygame.image.load('../assets/images/scenes/location2/location2_abandoned_city_shelf.jpg'))
 city_part3 = CityPart3(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_1.jpg'))
-
-
+city_part3door = CityPart3Door(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_2.jpg'))
+city_part3_corridor = CityPart3Corridor(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3.jpg'))
+city_part3_room = CityPart3Room(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4.jpg'))
 
 # Link scenes to boxes (after they are created)
 start_scene.boxes[0].next_scene = city_part2
@@ -175,3 +231,8 @@ city_part2_shop.boxes[0].next_scene = city_part2
 city_part2_shop.boxes[1].next_scene = city_part2_shop_shelf
 city_part2_shop_shelf.boxes[0].next_scene = city_part2_shop
 city_part3.boxes[0].next_scene = start_scene
+city_part3.boxes[1].next_scene = city_part3door
+city_part3door.boxes[0].next_scene = city_part3
+city_part3_corridor.boxes[0].next_scene = city_part3door
+city_part3_corridor.boxes[1].next_scene = city_part3_room
+city_part3_room.boxes[0].next_scene = city_part3_corridor
