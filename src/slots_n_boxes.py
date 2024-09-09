@@ -10,7 +10,8 @@ class Slot:
         # Check if the item is the required one and use it if so
         if item.name == self.required_item:
             self.action()  # Trigger the action (e.g., turn on light)
-            inventory.remove_item(item)  # Remove item from inventory
+            if item.name != "Crowbar":
+                inventory.remove_item(item)
             return True
         return False
 
