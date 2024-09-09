@@ -9,7 +9,7 @@ class GameObject:
         self.height = height
         self.rect = pygame.Rect(x, y, width, height)
         self.interactable = interactable
-        self.inventory_image = pygame.transform.scale_by(self.image, 0.5)
+        self.inventory_image = pygame.transform.scale_by(self.image, 0.4)
 
     def render(self, screen, x=None, y=None):
         if x is not None and y is not None:

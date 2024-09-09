@@ -1,6 +1,5 @@
 import pygame
 from objects import GameObject
-from inventory import Inventory
 from slots_n_boxes import Slot, Box
 
 class Node:
