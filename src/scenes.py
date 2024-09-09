@@ -164,7 +164,7 @@ class CityPart3Door(Node):
             Slot(x=920, y=480, width=270, height=430, required_item="Crowbar", action=self.use_crowbar)
         ]
         self.boxes = [
-            Box(x=300, y=930, width=1180, height=70, next_scene=None)
+            Box(x=300, y=960, width=1180, height=64, next_scene=None)
         ]
         self.new_box = None  # Placeholder for the new box
         pygame.mixer.init() 
@@ -208,13 +208,13 @@ class CityPart3Room(Node):
     def __init__(self, background_image, changed_background_image):
         super().__init__(background_image, changed_background_image)
         self.slots = [
-            Slot(x=900, y=130, width=150, height=150, required_item="Crowbar", action=self.break_ceiling)
+            Slot(x=900, y=130, width=110, height=120, required_item="Crowbar", action=self.break_ceiling)
         ]
         self.boxes = [
-            Box(x=100, y=940, width=1000, height=70, next_scene=None)
+            Box(x=0, y=950, width=850, height=70, next_scene=None)
         ]
         pygame.mixer.init()
-        self.breathing_sound = pygame.mixer.Sound('../assets/sounds/breathing_sound.mp3')
+        self.breathing_sound = pygame.mixer.Sound('../assets/sounds/citypart3room/breathing_sound.mp3')
         self.break_sound = pygame.mixer.Sound('../assets/sounds/break_sound.mp3')
 
         # Flag to check if breathing sound has been played already
@@ -225,6 +225,12 @@ class CityPart3Room(Node):
         if self.changed_background_image:
             self.break_sound.play()
             self.background_image = self.changed_background_image
+            self.add_new_box()
+
+    def add_new_box(self):
+        # Add the new box and set its next scene
+        self.new_box = Box(x=900, y=870, width=150, height=80, next_scene=city_part3_room_letter)
+        self.boxes.append(self.new_box)
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -232,6 +238,24 @@ class CityPart3Room(Node):
         if not self.breathing_sound_played:
             self.breathing_sound.play()
             self.breathing_sound_played = True
+
+class CityPart3RoomLetter(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=0, width=300, height=1024, next_scene=None),
+            Box(x=1300, y=0, width=200, height=1024, next_scene=None)
+        ]
+        pygame.mixer.init()
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+
+        self.paper_sound_played = False
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+        if not self.paper_sound_played:
+            self.paper_sound.play()
+            self.paper_sound_played = True
 
 # Initialize scenes with the appropriate images
 start_scene = Start(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_1.jpg'))
@@ -246,6 +270,7 @@ city_part3 = CityPart3(pygame.image.load('../assets/images/scenes/location3/city
 city_part3door = CityPart3Door(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_2.jpg'))
 city_part3_corridor = CityPart3Corridor(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3.jpg'))
 city_part3_room = CityPart3Room(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4.jpg'), pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4_after.jpg'))
+city_part3_room_letter = CityPart3RoomLetter(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4_after_letter_v3.jpg'))
 
 # Link scenes to boxes (after they are created)
 start_scene.boxes[0].next_scene = city_part2
@@ -269,3 +294,5 @@ city_part3door.boxes[0].next_scene = city_part3
 city_part3_corridor.boxes[0].next_scene = city_part3door
 city_part3_corridor.boxes[1].next_scene = city_part3_room
 city_part3_room.boxes[0].next_scene = city_part3_corridor
+city_part3_room_letter.boxes[0].next_scene = city_part3_room
+city_part3_room_letter.boxes[1].next_scene = city_part3_room
