@@ -4,9 +4,9 @@ from inventory import Inventory
 from slots_n_boxes import Slot, Box
 
 class Node:
-    def __init__(self, background_image, lit_background_image=None):
+    def __init__(self, background_image, changed_background_image=None):
         self.background_image = background_image
-        self.lit_background_image = lit_background_image  # Background after lightbulb is used
+        self.changed_background_image = changed_background_image  # Background after lightbulb is used
         self.boxes = []
         self.objects = []
         self.slots = []
@@ -76,10 +76,10 @@ class CityPart1LivingRoom(Node):
         super().render(screen, inventory)
 
 class CityPart1Pantry(Node):
-    def __init__(self, background_image, lit_background_image):
-        super().__init__(background_image, lit_background_image)
+    def __init__(self, background_image, changed_background_image):
+        super().__init__(background_image, changed_background_image)
 
-         # Define a slot where the lightbulb can be used
+         # Defining a slot where the lightbulb can be used
         self.slots = [
             Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
         ]
@@ -94,10 +94,10 @@ class CityPart1Pantry(Node):
 
     def use_lightbulb(self):
         # Change the background image to show the lit room
-        if self.lit_background_image:
+        if self.changed_background_image:
             self.lightbulb_sound.play()
             pygame.time.delay(2000)
-            self.background_image = self.lit_background_image
+            self.background_image = self.changed_background_image
 
             # Make the crowbar interactable now
             for obj in self.objects:
@@ -124,7 +124,7 @@ class CityPart2Shop(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=600, y=900, width=500, height=120, next_scene=None),
+            Box(x=300, y=920, width=800, height=120, next_scene=None),
             Box(x=890, y=315, width=170, height=300, next_scene=None)
         ]
     def render(self, screen, inventory):
@@ -165,7 +165,7 @@ class CityPart3Door(Node):
             Slot(x=920, y=480, width=270, height=430, required_item="Crowbar", action=self.use_crowbar)
         ]
         self.boxes = [
-            Box(x=300, y=930, width=900, height=70, next_scene=None)  
+            Box(x=300, y=930, width=1180, height=70, next_scene=None)
         ]
         self.new_box = None  # Placeholder for the new box
         pygame.mixer.init() 
@@ -200,18 +200,39 @@ class CityPart3Corridor(Node):
             Box(x=400, y=900, width=900, height=100, next_scene=None),
             Box(x=900, y=400, width=200, height=200, next_scene=None)  
         ]
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
 
 # creepy house last room
 class CityPart3Room(Node):
-    def __init__(self, background_image):
-        super().__init__(background_image)
-        self.boxes = [
-            Box(x=200, y=900, width=1000, height=110, next_scene=None) 
+    def __init__(self, background_image, changed_background_image):
+        super().__init__(background_image, changed_background_image)
+        self.slots = [
+            Slot(x=900, y=130, width=150, height=150, required_item="Crowbar", action=self.break_ceiling)
         ]
+        self.boxes = [
+            Box(x=100, y=940, width=1000, height=70, next_scene=None)
+        ]
+        pygame.mixer.init()
+        self.breathing_sound = pygame.mixer.Sound('../assets/sounds/breathing_sound.mp3')
+        self.break_sound = pygame.mixer.Sound('../assets/sounds/break_sound.mp3')
+
+        # Flag to check if breathing sound has been played already
+        self.breathing_sound_played = False
+
+    def break_ceiling(self):
+        # Changing the background image
+        if self.changed_background_image:
+            self.break_sound.play()
+            self.background_image = self.changed_background_image
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        # Play the breathing sound only once when the player first enters
+        if not self.breathing_sound_played:
+            self.breathing_sound.play()
+            self.breathing_sound_played = True
 
 # Initialize scenes with the appropriate images
 start_scene = Start(pygame.image.load('../assets/images/scenes/location1/location1_abandoned_city_1_1.jpg'))
@@ -225,7 +246,7 @@ city_part2_shop_shelf = CityPart2ShopShelf(pygame.image.load('../assets/images/s
 city_part3 = CityPart3(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_1.jpg'))
 city_part3door = CityPart3Door(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_2.jpg'))
 city_part3_corridor = CityPart3Corridor(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3.jpg'))
-city_part3_room = CityPart3Room(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4.jpg'))
+city_part3_room = CityPart3Room(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4.jpg'), pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_4_after.jpg'))
 
 # Link scenes to boxes (after they are created)
 start_scene.boxes[0].next_scene = city_part2
