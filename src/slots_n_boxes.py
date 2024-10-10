@@ -26,3 +26,29 @@ class Box:
     def click(self):
         if self.next_scene:
             self.next_scene.render()
+
+class Node:
+    def __init__(self, background_image, changed_background_image=None):
+        self.background_image = background_image
+        self.changed_background_image = changed_background_image  # Background after lightbulb is used
+        self.boxes = []
+        self.objects = []
+        self.slots = []
+
+    def render(self, screen, inventory):
+        screen.blit(self.background_image, (0, 0))
+        # Draw boxes
+        for box in self.boxes:
+            # Create a transparent surface
+            transparent_surface = pygame.Surface((box.width, box.height), pygame.SRCALPHA)
+            # Fill the surface with a black color and set its transparency
+            transparent_surface.fill((0, 0, 0, 0))  # Adjust the last value for more or less transparency
+            # Blit the transparent surface onto the screen at the box's position
+            screen.blit(transparent_surface, (box.x, box.y))
+
+        # Draw objects
+        for obj in self.objects:
+            if obj.interactable:  # Only draw objects that haven't been picked up
+                obj.render(screen)
+
+        inventory.render(screen)
