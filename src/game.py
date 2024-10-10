@@ -1,6 +1,6 @@
 import pygame
 import sys
-from scenes import start_scene
+from scene_manager import start_scene
 from inventory import Inventory
 
 
