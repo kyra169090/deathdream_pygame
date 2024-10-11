@@ -2,13 +2,21 @@ import pygame
 from objects import GameObject
 from slots_n_boxes import Slot, Box, Node
 
+class GameState:
+    def __init__(self):
+        self.all_papers_collected = False
+        self.paper1_collected = False
+        self.paper2_collected = False
+        self.paper3_collected = False
+
+game_state = GameState()  # Shared game state
 
 class Start(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=1270, y=650, width=220, height=200, next_scene=None),
-            Box(x=00, y=900, width=600, height=100, next_scene=None),
+            Box(x=1270, y=650, width=230, height=200, next_scene=None),
+            Box(x=00, y=924, width=600, height=100, next_scene=None),
             Box(x=600, y=600, width=200, height=140, next_scene=None)  
         ]
     def render(self, screen, inventory):
@@ -57,7 +65,7 @@ class CityPart1Pantry(Node):
             Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
         ]
         self.boxes = [
-            Box(x=0, y=910, width=550, height=110, next_scene=None)           
+            Box(x=0, y=910, width=620, height=110, next_scene=None)
         ]
         self.objects = [
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200, interactable=False)
@@ -83,14 +91,23 @@ class CityPart1Pantry(Node):
 
 # way to the shop
 class CityPart2(Node):
-    def __init__(self, background_image):
+    def __init__(self, background_image, game_state, next_scene):
         super().__init__(background_image)
+        self.next_scene = next_scene
         self.boxes = [
-            Box(x=300, y=900, width=700, height=120, next_scene=None),
+            Box(x=100, y=924, width=1000, height=100, next_scene=None),
             Box(x=810, y=615, width=180, height=150, next_scene=None)  
         ]
+        self.game_state = game_state
+        self.new_box = None
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        if self.game_state.paper1_collected and self.game_state.paper2_collected and self.game_state.paper3_collected:
+            self.game_state.all_papers_collected = True  # Set flag in game state
+            if self.game_state.all_papers_collected and not self.new_box:
+                self.new_box = Box(x=560, y=420, width=200, height=300, next_scene=self.next_scene)
+                self.boxes.append(self.new_box)
 
 # inside the shop
 class CityPart2Shop(Node):
@@ -108,7 +125,7 @@ class CityPart2ShopShelf(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=400, y=900, width=750, height=150, next_scene=None)  
+            Box(x=200, y=900, width=1250, height=150, next_scene=None)
         ]
         self.objects = [
             GameObject(name="Lightbulb", image_path="../assets/images/scenes/location2/lightbulb.png", x=1005, y=453, width=235, height=277)
@@ -133,15 +150,15 @@ class CityPart3(Node):
 class CityPart3Door(Node):
     def __init__(self, background_image, next_scene):
         super().__init__(background_image)
-        self.isOpen = False  # Initialize the door as closed
-        self.next_scene = next_scene  # Store the next scene
+        self.isOpen = False
+        self.next_scene = next_scene
         self.slots = [
             Slot(x=920, y=480, width=270, height=430, required_item="Crowbar", action=self.use_crowbar)
         ]
         self.boxes = [
             Box(x=300, y=960, width=1180, height=64, next_scene=None)
         ]
-        self.new_box = None  # Placeholder for the new box
+        self.new_box = None
         pygame.mixer.init() 
         self.door_crowbar_sound = pygame.mixer.Sound('../assets/sounds/door_with_crowbar.mp3')
 
@@ -244,16 +261,16 @@ class CityPart3RoomLetter(Node):
 
 
 class CityPart3CorridorWardrobe(Node):
-    def __init__(self, background_image, changed_background_image, next_scene1, next_scene2):
+    def __init__(self, background_image, changed_background_image, next_scene1, next_scene2, next_scene3):
         super().__init__(background_image, changed_background_image)
-        self.next_scene1 = next_scene1  # Store the next scene
-        self.next_scene2 = next_scene2  # Store the next scene
-
+        self.next_scene1 = next_scene1
+        self.next_scene2 = next_scene2
+        self.next_scene3 = next_scene3
         self.slots = [
             Slot(x=700, y=600, width=100, height=150, required_item="Key", action=self.use_key)
         ]
         self.boxes = [
-            Box(x=0, y=910, width=950, height=110, next_scene=None)
+            Box(x=0, y=920, width=1500, height=104, next_scene=None)
         ]
         self.new_box = None
         pygame.mixer.init()
@@ -269,16 +286,18 @@ class CityPart3CorridorWardrobe(Node):
 
     def add_new_boxes(self):
         # Add the new box and set its next scene
-        self.new_box1 = Box(x=365, y=795, width=180, height=100, next_scene=self.next_scene1)
+        self.new_box1 = Box(x=355, y=795, width=180, height=100, next_scene=self.next_scene1)
         self.new_box2 = Box(x=655, y=790, width=180, height=100, next_scene=self.next_scene2)
+        self.new_box3 = Box(x=1040, y=620, width=180, height=100, next_scene=self.next_scene3)
         self.boxes.append(self.new_box1)
         self.boxes.append(self.new_box2)
+        self.boxes.append(self.new_box3)
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
 
 class CityPart3Photo1(Node):
-    def __init__(self, background_image):
+    def __init__(self, background_image, game_state):
         super().__init__(background_image)
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
@@ -286,16 +305,18 @@ class CityPart3Photo1(Node):
         pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
+        self.game_state = game_state
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
         if not self.paper_sound_played:
             self.paper_sound.play()
             self.paper_sound_played = True
+            self.game_state.paper1_collected = True
 
 
 class CityPart3Photo2(Node):
-    def __init__(self, background_image):
+    def __init__(self, background_image, game_state):
         super().__init__(background_image)
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
@@ -303,9 +324,66 @@ class CityPart3Photo2(Node):
         pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
+        self.game_state = game_state
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
         if not self.paper_sound_played:
             self.paper_sound.play()
             self.paper_sound_played = True
+            self.game_state.paper2_collected = True
+
+
+class CityPart3CorridorWardrobeLetter(Node):
+    def __init__(self, background_image, game_state):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=0, width=1500, height=1024, next_scene=None)
+        ]
+        pygame.mixer.init()
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound_played = False
+        self.game_state = game_state
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+        if not self.paper_sound_played:
+            self.paper_sound.play()
+            self.paper_sound_played = True
+            self.game_state.paper3_collected = True
+
+class CityPart4Street1(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=1000, y=620, width=240, height=160, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4Street2(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=1200, y=520, width=300, height=160, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4Street3(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=750, y=620, width=240, height=160, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouse(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=1180, y=580, width=300, height=200, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
