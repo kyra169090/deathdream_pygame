@@ -26,6 +26,15 @@ city_part3_corridor_wardrobe = CityPart3CorridorWardrobe(pygame.image.load('../a
 city_part4_street2 = CityPart4Street2(pygame.image.load('../assets/images/scenes/location4/city_part_4_2.jpg'))
 city_part4_street3 = CityPart4Street3(pygame.image.load('../assets/images/scenes/location4/city_part_4_3.jpg'))
 city_part4_familyhouse = CityPart4FamilyHouse(pygame.image.load('../assets/images/scenes/location4/city_part_4_4.jpg'))
+city_part4_familyhouseyard = CityPart4FamilyHouseYard(pygame.image.load('../assets/images/scenes/location4/city_part_4_5.jpg'))
+city_part4_familyhousefirstroom = CityPart4FamilyHouseFirstRoom(pygame.image.load('../assets/images/scenes/location4/city_part_4_6.jpg'))
+city_part4_familyhousesecondroom = CityPart4FamilyHouseSecondRoom(pygame.image.load('../assets/images/scenes/location4/city_part_4_6_1.jpg'))
+city_part4_familyhousethirdroom = CityPart4FamilyHouseThirdRoom(pygame.image.load('../assets/images/scenes/location4/city_part_4_6_2.jpg'))
+city_part4_familyhousebasement = CityPart4FamilyHouseBasement(pygame.image.load('../assets/images/scenes/location4/city_part_4_7.jpg'))
+city_part4_familyhousebasementholeintheground = CityPart4FamilyHoleInTheGround(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_2.jpg'))
+city_part4_familyhousebasement2 = CityPart4FamilyHouseBasement2(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_1.jpg'), pygame.image.load('../assets/images/scenes/location4/city_part_4_8_1_after.jpg'), next_scene=city_part4_familyhousebasementholeintheground)
+city_part4_familyhousebasement3 = CityPart4FamilyHouseBasement3(pygame.image.load('../assets/images/scenes/location4/city_part_4_9.jpg'))
+city_part4_familyhousebasement3letter = CityPart4FamilyHouseBasement3Letter(pygame.image.load('../assets/images/scenes/location4/city_part_4_9_letter.jpg'))
 
 
 # Link scenes to boxes (after they are created)
@@ -62,3 +71,17 @@ city_part3_corridor_wardrobe_letter.boxes[0].next_scene = city_part3_corridor_wa
 city_part4_street1.boxes[0].next_scene = city_part4_street2
 city_part4_street2.boxes[0].next_scene = city_part4_street3
 city_part4_street3.boxes[0].next_scene = city_part4_familyhouse
+city_part4_familyhouse.boxes[0].next_scene = city_part4_familyhouseyard
+city_part4_familyhouseyard.boxes[0].next_scene = city_part4_familyhousefirstroom
+city_part4_familyhousefirstroom.boxes[0].next_scene = city_part4_familyhousesecondroom
+city_part4_familyhousefirstroom.boxes[1].next_scene = city_part4_familyhousebasement
+city_part4_familyhousefirstroom.boxes[2].next_scene = city_part4_familyhouseyard
+city_part4_familyhousesecondroom.boxes[0].next_scene = city_part4_familyhousethirdroom
+city_part4_familyhousesecondroom.boxes[1].next_scene = city_part4_familyhousefirstroom
+city_part4_familyhousethirdroom.boxes[0].next_scene = city_part4_familyhousesecondroom
+city_part4_familyhousebasement.boxes[0].next_scene = city_part4_familyhousebasement2
+city_part4_familyhousebasement.boxes[1].next_scene = city_part4_familyhousefirstroom
+city_part4_familyhousebasement2.boxes[0].next_scene = city_part4_familyhousebasement
+city_part4_familyhousebasement2.boxes[1].next_scene = city_part4_familyhousebasement3
+city_part4_familyhousebasement3.boxes[0].next_scene = city_part4_familyhousebasement2
+city_part4_familyhousebasement3.boxes[1].next_scene = city_part4_familyhousebasement3letter

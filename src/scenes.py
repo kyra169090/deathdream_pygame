@@ -59,7 +59,7 @@ class CityPart1LivingRoom(Node):
 class CityPart1Pantry(Node):
     def __init__(self, background_image, changed_background_image):
         super().__init__(background_image, changed_background_image)
-
+        self.lightbulb_used = False
          # Defining a slot where the lightbulb can be used
         self.slots = [
             Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
@@ -75,10 +75,11 @@ class CityPart1Pantry(Node):
 
     def use_lightbulb(self):
         # Change the background image to show the lit room
-        if self.changed_background_image:
+        if not self.lightbulb_used and self.changed_background_image:
             self.lightbulb_sound.play()
             pygame.time.delay(2000)
             self.background_image = self.changed_background_image
+            self.lightbulb_used = True
 
             # Make the crowbar interactable now
             for obj in self.objects:
@@ -263,6 +264,7 @@ class CityPart3RoomLetter(Node):
 class CityPart3CorridorWardrobe(Node):
     def __init__(self, background_image, changed_background_image, next_scene1, next_scene2, next_scene3):
         super().__init__(background_image, changed_background_image)
+        self.key_used = False
         self.next_scene1 = next_scene1
         self.next_scene2 = next_scene2
         self.next_scene3 = next_scene3
@@ -278,11 +280,12 @@ class CityPart3CorridorWardrobe(Node):
 
     def use_key(self):
         # Change the background image to show the lit room
-        if self.changed_background_image:
+        if not self.key_used and self.changed_background_image:
             self.unlocking_sound.play()
             pygame.time.delay(1000)
             self.background_image = self.changed_background_image
             self.add_new_boxes()
+            self.key_used = True
 
     def add_new_boxes(self):
         # Add the new box and set its next scene
@@ -384,6 +387,121 @@ class CityPart4FamilyHouse(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=1180, y=580, width=300, height=200, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseYard(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=480, y=370, width=150, height=300, next_scene=None)
+        ]
+        self.objects = [
+            GameObject(name="Shovel", image_path="../assets/images/scenes/location4/shovel.png", x=900, y=850, width=200, height=110)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+
+class CityPart4FamilyHouseFirstRoom(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=520, y=280, width=280, height=500, next_scene=None),
+            Box(x=1120, y=290, width=200, height=500, next_scene=None),
+            Box(x=0, y=920, width=1500, height=104, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseSecondRoom(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=410, y=280, width=190, height=300, next_scene=None),
+            Box(x=1200, y=880, width=300, height=200, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseThirdRoom(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=1100, y=880, width=300, height=200, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseBasement(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=610, y=280, width=300, height=200, next_scene=None),
+            Box(x=0, y=900, width=1000, height=124, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseBasement2(Node):
+    def __init__(self, background_image, changed_background_image, next_scene):
+        super().__init__(background_image, changed_background_image)
+        self.shovel_used = False
+        self.next_scene = next_scene
+        self.slots = [
+            Slot(x=500, y=800, width=300, height=120, required_item="Shovel", action=self.use_shovel)
+        ]
+        self.boxes = [
+            Box(x=230, y=350, width=300, height=200, next_scene=None),
+            Box(x=0, y=900, width=1000, height=124, next_scene=None)
+        ]
+        self.new_box = None
+        pygame.mixer.init()
+        self.digging_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/digging.mp3')
+
+    def use_shovel(self):
+        # Change the background image to show the lit room
+        if not self.shovel_used and self.changed_background_image:
+            self.digging_sound.play()
+            pygame.time.delay(3500)
+            self.background_image = self.changed_background_image
+            pygame.time.delay(3000)
+            self.add_new_box()
+            self.shovel_used = True
+
+    def add_new_box(self):
+        # Add the new box and set its next scene
+        self.new_box = Box(x=650, y=770, width=200, height=150, next_scene=self.next_scene)
+        self.boxes.append(self.new_box)
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseBasement3(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=450, y=370, width=300, height=200, next_scene=None),
+            Box(x=0, y=900, width=1000, height=124, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHouseBasement3Letter(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=0, width=1500, height=1024, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4FamilyHoleInTheGround(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
