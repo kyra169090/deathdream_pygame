@@ -251,7 +251,6 @@ class CityPart3RoomLetter(Node):
         ]
         pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
-
         self.paper_sound_played = False
 
     def render(self, screen, inventory):
@@ -494,8 +493,15 @@ class CityPart4FamilyHouseBasement3Letter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
+        pygame.mixer.init()
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound_played = False
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        if not self.paper_sound_played:
+            self.paper_sound.play()
+            self.paper_sound_played = True
 
 class CityPart4FamilyHoleInTheGround(Node):
     def __init__(self, background_image):
@@ -506,3 +512,38 @@ class CityPart4FamilyHoleInTheGround(Node):
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
+
+class CityPart4Cave1(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=265, y=320, width=600, height=450, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4Cave2(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        # slot for the dark entrance, no entering, only action
+        self.boxes = [
+            Box(x=0, y=924, width=1500, height=100, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart4Cave1Letter(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=0, width=1500, height=1024, next_scene=None)
+        ]
+        pygame.mixer.init()
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound_played = False
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+        if not self.paper_sound_played:
+            self.paper_sound.play()
+            self.paper_sound_played = True
