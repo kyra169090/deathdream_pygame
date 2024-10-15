@@ -31,6 +31,7 @@ class Game:
         
         while running:
             moving_mouse_pos = pygame.mouse.get_pos()
+            # print(moving_mouse_pos)
             hover = False
             
             # The Pygame event loop (for a point&click mousedown is enough)
@@ -47,13 +48,6 @@ class Game:
                                 self.inventory.select_item(item)
                                 selected_item = item
                                 break
-                    # Handle interaction with slots
-                    for slot in self.current_scene.slots:
-                        if slot.rect.collidepoint(mouse_pos) and selected_item:
-                            if slot.try_use_item(selected_item, self.inventory):
-                                self.inventory.selected_item = None  # Deselecting the item after it is used
-                                selected_item = None  # Clear selection if the item is used
-                                break
 
                     # Check for interactions with objects
                     for obj in self.current_scene.objects:
@@ -66,6 +60,13 @@ class Game:
                         if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(mouse_pos):
                             self.current_scene = box.next_scene
                             break
+
+                    # Handle interaction with slots
+                    for slot in self.current_scene.slots:
+                        if slot.rect.collidepoint(mouse_pos) and selected_item:
+                            if slot.try_use_item(selected_item, self.inventory):
+                                self.inventory.selected_item = None  # Deselecting the item after it is used
+                                break
 
             for box in self.current_scene.boxes:
                 if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(moving_mouse_pos):

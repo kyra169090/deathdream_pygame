@@ -232,7 +232,7 @@ class CityPart3Room(Node):
 
     def add_new_item_to_screen(self):
         # Add the new box and set its next scene
-        self.new_item = GameObject(name="Key", image_path="../assets/images/scenes/location3/key.png", x=845, y=900, width=65, height=20)
+        self.new_item = GameObject(name="Key", image_path="../assets/images/scenes/location3/key.png", x=840, y=920, width=75, height=25)
         self.objects.append(self.new_item)
 
     def render(self, screen, inventory):
@@ -398,7 +398,7 @@ class CityPart4FamilyHouseYard(Node):
             Box(x=480, y=370, width=150, height=300, next_scene=None)
         ]
         self.objects = [
-            GameObject(name="Shovel", image_path="../assets/images/scenes/location4/shovel.png", x=900, y=850, width=200, height=110)
+            GameObject(name="Shovel", image_path="../assets/images/scenes/location4/shovel.png", x=900, y=850, width=200, height=74)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -450,11 +450,11 @@ class CityPart4FamilyHouseBasement2(Node):
         self.shovel_used = False
         self.next_scene = next_scene
         self.slots = [
-            Slot(x=500, y=800, width=300, height=120, required_item="Shovel", action=self.use_shovel)
+            Slot(x=500, y=770, width=400, height=140, required_item="Shovel", action=self.use_shovel)
         ]
         self.boxes = [
             Box(x=230, y=350, width=300, height=200, next_scene=None),
-            Box(x=0, y=900, width=1000, height=124, next_scene=None)
+            Box(x=0, y=930, width=1500, height=94, next_scene=None)
         ]
         self.new_box = None
         pygame.mixer.init()
@@ -464,14 +464,14 @@ class CityPart4FamilyHouseBasement2(Node):
         # Change the background image to show the lit room
         if not self.shovel_used and self.changed_background_image:
             self.digging_sound.play()
-            pygame.time.delay(3500)
+            pygame.time.delay(4000)
             self.background_image = self.changed_background_image
-            pygame.time.delay(3000)
             self.add_new_box()
             self.shovel_used = True
 
     def add_new_box(self):
         # Add the new box and set its next scene
+        pygame.time.delay(2500)
         self.new_box = Box(x=650, y=770, width=200, height=150, next_scene=self.next_scene)
         self.boxes.append(self.new_box)
 
@@ -483,7 +483,7 @@ class CityPart4FamilyHouseBasement3(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=450, y=370, width=300, height=200, next_scene=None),
-            Box(x=0, y=900, width=1000, height=124, next_scene=None)
+            Box(x=950, y=700, width=150, height=120, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -501,7 +501,8 @@ class CityPart4FamilyHoleInTheGround(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=0, y=0, width=1500, height=1024, next_scene=None)
+            Box(x=0, y=924, width=1500, height=100, next_scene=None),
+            Box(x=265, y=320, width=600, height=450, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
