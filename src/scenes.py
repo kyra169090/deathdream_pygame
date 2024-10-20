@@ -19,8 +19,14 @@ class Start(Node):
             Box(x=00, y=924, width=600, height=100, next_scene=None),
             Box(x=600, y=600, width=200, height=140, next_scene=None)  
         ]
+        self.dialogue_shown = True  # Start with the dialogue shown
+        self.text = "Where am I?"
+        self.text_rect = pygame.Rect(50, 900, 300, 50)
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        if self.dialogue_shown:
+            self.render_text(screen, self.text, (50, 900))
 
 # first house
 class CityPart1Door(Node):
@@ -70,7 +76,6 @@ class CityPart1Pantry(Node):
         self.objects = [
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200, interactable=False)
         ]
-        pygame.mixer.init() 
         self.lightbulb_sound = pygame.mixer.Sound('../assets/sounds/lightbulb_sound.mp3')
 
     def use_lightbulb(self):
@@ -104,11 +109,9 @@ class CityPart2(Node):
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
-        if self.game_state.paper1_collected and self.game_state.paper2_collected and self.game_state.paper3_collected:
-            self.game_state.all_papers_collected = True  # Set flag in game state
-            if self.game_state.all_papers_collected and not self.new_box:
-                self.new_box = Box(x=560, y=420, width=200, height=300, next_scene=self.next_scene)
-                self.boxes.append(self.new_box)
+        if self.game_state.all_papers_collected and not self.new_box:
+            self.new_box = Box(x=560, y=420, width=200, height=300, next_scene=self.next_scene)
+            self.boxes.append(self.new_box)
 
 # inside the shop
 class CityPart2Shop(Node):
@@ -160,7 +163,6 @@ class CityPart3Door(Node):
             Box(x=300, y=960, width=1180, height=64, next_scene=None)
         ]
         self.new_box = None
-        pygame.mixer.init() 
         self.door_crowbar_sound = pygame.mixer.Sound('../assets/sounds/door_with_crowbar.mp3')
 
     def use_crowbar(self):
@@ -209,7 +211,6 @@ class CityPart3Room(Node):
         self.boxes = [
             Box(x=0, y=950, width=850, height=70, next_scene=None)
         ]
-        pygame.mixer.init()
         self.breathing_sound = pygame.mixer.Sound('../assets/sounds/citypart3room/breathing_sound.mp3')
         self.break_sound = pygame.mixer.Sound('../assets/sounds/break_sound.mp3')
 
@@ -249,7 +250,6 @@ class CityPart3RoomLetter(Node):
             Box(x=0, y=0, width=300, height=1024, next_scene=None),
             Box(x=1300, y=0, width=200, height=1024, next_scene=None)
         ]
-        pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
 
@@ -261,7 +261,7 @@ class CityPart3RoomLetter(Node):
 
 
 class CityPart3CorridorWardrobe(Node):
-    def __init__(self, background_image, changed_background_image, next_scene1, next_scene2, next_scene3):
+    def __init__(self, background_image, changed_background_image, game_state, next_scene1, next_scene2, next_scene3):
         super().__init__(background_image, changed_background_image)
         self.key_used = False
         self.next_scene1 = next_scene1
@@ -274,8 +274,11 @@ class CityPart3CorridorWardrobe(Node):
             Box(x=0, y=920, width=1500, height=104, next_scene=None)
         ]
         self.new_box = None
-        pygame.mixer.init()
         self.unlocking_sound = pygame.mixer.Sound('../assets/sounds/unlocking.mp3')
+        self.game_state = game_state
+        self.dialogue_shown = True
+        self.text = "I had enough, this house is scaring me! I want to leave this place, now!"
+        self.text_rect = pygame.Rect(50, 870, 900, 50)
 
     def use_key(self):
         # Change the background image to show the lit room
@@ -297,6 +300,10 @@ class CityPart3CorridorWardrobe(Node):
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        if self.game_state.paper1_collected and self.game_state.paper2_collected and self.game_state.paper3_collected:
+            self.game_state.all_papers_collected = True  # Set flag in game state
+            if self.game_state.all_papers_collected and self.dialogue_shown:
+                self.render_text(screen, self.text, (50, 870))
 
 class CityPart3Photo1(Node):
     def __init__(self, background_image, game_state):
@@ -304,7 +311,6 @@ class CityPart3Photo1(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
         self.game_state = game_state
@@ -323,7 +329,6 @@ class CityPart3Photo2(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
         self.game_state = game_state
@@ -342,7 +347,6 @@ class CityPart3CorridorWardrobeLetter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
         self.game_state = game_state
@@ -456,7 +460,6 @@ class CityPart4FamilyHouseBasement2(Node):
             Box(x=0, y=930, width=1500, height=94, next_scene=None)
         ]
         self.new_box = None
-        pygame.mixer.init()
         self.digging_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/digging.mp3')
 
     def use_shovel(self):
@@ -493,7 +496,6 @@ class CityPart4FamilyHouseBasement3Letter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
 
@@ -538,7 +540,6 @@ class CityPart4Cave1Letter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        pygame.mixer.init()
         self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
         self.paper_sound_played = False
 

@@ -20,7 +20,7 @@ city_part3_room = CityPart3Room(pygame.image.load('../assets/images/scenes/locat
 city_part3_wardrobe_photo1 = CityPart3Photo1(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_photo1.jpg'), game_state)
 city_part3_wardrobe_photo2 = CityPart3Photo2(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_photo2.jpg'), game_state)
 city_part3_corridor_wardrobe_letter = CityPart3CorridorWardrobeLetter(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_open_2.jpg'), game_state)
-city_part3_corridor_wardrobe = CityPart3CorridorWardrobe(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_closed.jpg'), pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_open.jpg'), next_scene1=city_part3_wardrobe_photo1, next_scene2=city_part3_wardrobe_photo2, next_scene3=city_part3_corridor_wardrobe_letter)
+city_part3_corridor_wardrobe = CityPart3CorridorWardrobe(pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_closed.jpg'), pygame.image.load('../assets/images/scenes/location3/city_part_3_girl_int_the_wall_1_3_1_wardrobe_open.jpg'), game_state, next_scene1=city_part3_wardrobe_photo1, next_scene2=city_part3_wardrobe_photo2, next_scene3=city_part3_corridor_wardrobe_letter)
 
 # City Part4
 city_part4_street2 = CityPart4Street2(pygame.image.load('../assets/images/scenes/location4/city_part_4_2.jpg'))

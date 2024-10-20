@@ -41,6 +41,11 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
 
+                    # Check if the current scene has dialogue and if it's shown
+                    if hasattr(self.current_scene, 'dialogue_shown') and self.current_scene.dialogue_shown:
+                        if self.current_scene.text_rect.collidepoint(mouse_pos):
+                            self.current_scene.dialogue_shown = False  # Hide the dialogue if clicked
+
                     # Handle item selection from the inventory
                     if event.button == 1:  # Left-click
                         for item in self.inventory.items:
@@ -49,7 +54,7 @@ class Game:
                                 selected_item = item
                                 break
 
-                    # Check for interactions with objects
+                    # Check for interactions with objects that can be picked up
                     for obj in self.current_scene.objects:
                         if obj.rect.collidepoint(mouse_pos):
                             obj.interact(self.inventory)
@@ -61,13 +66,14 @@ class Game:
                             self.current_scene = box.next_scene
                             break
 
-                    # Handle interaction with slots
+                    # Handle interaction with slots (you can use objects on them)
                     for slot in self.current_scene.slots:
                         if slot.rect.collidepoint(mouse_pos) and selected_item:
                             if slot.try_use_item(selected_item, self.inventory):
                                 self.inventory.selected_item = None  # Deselecting the item after it is used
                                 break
 
+            # If pointer should be shown or not
             for box in self.current_scene.boxes:
                 if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(moving_mouse_pos):
                     hover = True
@@ -88,3 +94,4 @@ class Game:
             pygame.display.flip()
 
         pygame.quit()
+        sys.exit()

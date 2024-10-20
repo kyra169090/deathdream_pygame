@@ -34,6 +34,9 @@ class Node:
         self.boxes = []
         self.objects = []
         self.slots = []
+        pygame.mixer.init()
+        pygame.font.init()
+        self.font = pygame.font.Font(None, 50)
 
     def render(self, screen, inventory):
         screen.blit(self.background_image, (0, 0))
@@ -52,3 +55,7 @@ class Node:
                 obj.render(screen)
 
         inventory.render(screen)
+
+    def render_text(self, screen, text, position):
+        rendered_text = self.font.render(text, True, (255, 255, 255))
+        screen.blit(rendered_text, position)
