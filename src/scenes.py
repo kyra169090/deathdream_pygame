@@ -16,17 +16,21 @@ class Start(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=1270, y=650, width=230, height=200, next_scene=None),
-            Box(x=00, y=924, width=600, height=100, next_scene=None),
+            Box(x=0, y=924, width=600, height=100, next_scene=None),
             Box(x=600, y=600, width=200, height=140, next_scene=None)  
         ]
-        self.dialogue_shown = True  # Start with the dialogue shown
-        self.text = "Where am I?"
-        self.text_rect = pygame.Rect(50, 900, 300, 50)
+        self.show_dialogue = True
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
-        if self.dialogue_shown:
-            self.render_text(screen, self.text, (50, 900))
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if self.show_dialogue:
+            self.render_text(screen, "Where am I?")
+
+    def click_dialogue(self):
+        self.show_dialogue = False
 
 # first house
 class CityPart1Door(Node):
@@ -34,7 +38,7 @@ class CityPart1Door(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=700, y=300, width=250, height=650, next_scene=None),
-            Box(x=000, y=900, width=400, height=150, next_scene=None) 
+            Box(x=0, y=900, width=400, height=150, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -68,7 +72,7 @@ class CityPart1Pantry(Node):
         self.lightbulb_used = False
          # Defining a slot where the lightbulb can be used
         self.slots = [
-            Slot(x=10, y=10, width=100, height=100, required_item="Lightbulb", action=self.use_lightbulb)
+            Slot(x=10, y=10, width=110, height=120, required_item="Lightbulb", action=self.use_lightbulb)
         ]
         self.boxes = [
             Box(x=0, y=910, width=620, height=110, next_scene=None)
@@ -276,9 +280,8 @@ class CityPart3CorridorWardrobe(Node):
         self.new_box = None
         self.unlocking_sound = pygame.mixer.Sound('../assets/sounds/unlocking.mp3')
         self.game_state = game_state
-        self.dialogue_shown = True
-        self.text = "I had enough, this house is scaring me! I want to leave this place, now!"
-        self.text_rect = pygame.Rect(50, 870, 900, 50)
+        self.show_dialogue = False
+        self.dialogue_is_clicked = False
 
     def use_key(self):
         # Change the background image to show the lit room
@@ -301,9 +304,19 @@ class CityPart3CorridorWardrobe(Node):
     def render(self, screen, inventory):
         super().render(screen, inventory)
         if self.game_state.paper1_collected and self.game_state.paper2_collected and self.game_state.paper3_collected:
-            self.game_state.all_papers_collected = True  # Set flag in game state
-            if self.game_state.all_papers_collected and self.dialogue_shown:
-                self.render_text(screen, self.text, (50, 870))
+            self.game_state.all_papers_collected = True
+            if not self.dialogue_is_clicked:
+                self.show_dialogue = True
+                self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if self.show_dialogue:
+            self.render_text(screen, "I had enough, this house is scaring me! I want to leave this place, now!")
+
+    def click_dialogue(self):
+        if self.game_state.all_papers_collected:
+            self.show_dialogue = False
+            self.dialogue_is_clicked = True
 
 class CityPart3Photo1(Node):
     def __init__(self, background_image, game_state):

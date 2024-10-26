@@ -37,6 +37,8 @@ class Node:
         pygame.mixer.init()
         pygame.font.init()
         self.font = pygame.font.Font(None, 50)
+        self.text_rect = pygame.Rect(50, 10, 1400, 70)
+        self.show_dialogue = False
 
     def render(self, screen, inventory):
         screen.blit(self.background_image, (0, 0))
@@ -56,6 +58,10 @@ class Node:
 
         inventory.render(screen)
 
-    def render_text(self, screen, text, position):
+    def render_text(self, screen, text):
+        pygame.draw.rect(screen, (0, 0, 0), self.text_rect)
         rendered_text = self.font.render(text, True, (255, 255, 255))
-        screen.blit(rendered_text, position)
+        screen.blit(rendered_text, (self.text_rect.x + 10, self.text_rect.y + 10))
+
+    def click_dialogue(self):
+        pass

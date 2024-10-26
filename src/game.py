@@ -41,11 +41,6 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
 
-                    # Check if the current scene has dialogue and if it's shown
-                    if hasattr(self.current_scene, 'dialogue_shown') and self.current_scene.dialogue_shown:
-                        if self.current_scene.text_rect.collidepoint(mouse_pos):
-                            self.current_scene.dialogue_shown = False  # Hide the dialogue if clicked
-
                     # Handle item selection from the inventory
                     if event.button == 1:  # Left-click
                         for item in self.inventory.items:
@@ -72,6 +67,11 @@ class Game:
                             if slot.try_use_item(selected_item, self.inventory):
                                 self.inventory.selected_item = None  # Deselecting the item after it is used
                                 break
+
+                    # Check if the current scene has dialogue and if it's shown
+                    if self.current_scene.show_dialogue:
+                        if self.current_scene.text_rect.collidepoint(mouse_pos):
+                            self.current_scene.click_dialogue()
 
             # If pointer should be shown or not
             for box in self.current_scene.boxes:
