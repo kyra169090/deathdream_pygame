@@ -1,6 +1,5 @@
 import pygame
 import sys
-from scene_manager import start_scene
 from inventory import Inventory
 
 
@@ -15,14 +14,18 @@ class Game:
         pygame.display.set_caption('Deathdream')
 
         # Music
-        pygame.mixer.init()
-        pygame.mixer.music.load('../assets/sounds/background_music.mp3')
-        pygame.mixer.music.play(-1)
+        try:
+            pygame.mixer.init()
+            pygame.mixer.music.load('../assets/sounds/background_music.mp3')
+            pygame.mixer.music.play(-1)
+        except:
+            pass
+        from scene_manager import start_scene
 
         # Start with location1
         self.current_scene = start_scene
         self.inventory = Inventory()
-        
+
 
     def run(self):
         running = True

@@ -404,8 +404,18 @@ class CityPart4FamilyHouse(Node):
         self.boxes = [
             Box(x=1180, y=580, width=300, height=200, next_scene=None)
         ]
+        self.show_dialogue = True
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if self.show_dialogue:
+            self.render_text(screen, "I know this place.... I grew up in this house... but I could not recognize the street at all?!")
+
+    def click_dialogue(self):
+        self.show_dialogue = False
 
 class CityPart4FamilyHouseYard(Node):
     def __init__(self, background_image):
@@ -457,8 +467,18 @@ class CityPart4FamilyHouseBasement(Node):
             Box(x=610, y=280, width=300, height=200, next_scene=None),
             Box(x=0, y=900, width=1000, height=124, next_scene=None)
         ]
+        self.show_dialogue = True
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if self.show_dialogue:
+            self.render_text(screen,"What the heck is this? We never had a basement.")
+
+    def click_dialogue(self):
+        self.show_dialogue = False
 
 class CityPart4FamilyHouseBasement2(Node):
     def __init__(self, background_image, changed_background_image, next_scene):
@@ -500,8 +520,19 @@ class CityPart4FamilyHouseBasement3(Node):
             Box(x=450, y=370, width=300, height=200, next_scene=None),
             Box(x=950, y=700, width=150, height=120, next_scene=None)
         ]
+        self.show_dialogue = True
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if self.show_dialogue:
+            self.render_text(screen,
+                             "Why are these desks and benches here? It looks like a secret place for a gathering")
+
+    def click_dialogue(self):
+        self.show_dialogue = False
 
 class CityPart4FamilyHouseBasement3Letter(Node):
     def __init__(self, background_image):

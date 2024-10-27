@@ -34,7 +34,6 @@ class Node:
         self.boxes = []
         self.objects = []
         self.slots = []
-        pygame.mixer.init()
         pygame.font.init()
         self.font = pygame.font.Font(None, 50)
         self.text_rect = pygame.Rect(50, 10, 1400, 70)
