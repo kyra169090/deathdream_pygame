@@ -20,10 +20,10 @@ class Game:
             pygame.mixer.music.play(-1)
         except:
             pass
-        from scene_manager import start_scene
+        from scene_manager import city_part4_familyhouse
 
         # Start with location1
-        self.current_scene = start_scene
+        self.current_scene = city_part4_familyhouse
         self.inventory = Inventory()
 
 

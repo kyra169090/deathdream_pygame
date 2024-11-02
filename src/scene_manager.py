@@ -92,4 +92,5 @@ city_part4_familyhousebasement3letter.boxes[0].next_scene = city_part4_familyhou
 city_part4_familyhousebasementholeintheground.boxes[0].next_scene = city_part4_familyhousebasement2
 city_part4_familyhousebasementholeintheground.boxes[1].next_scene = city_part_4_8_3
 city_part_4_8_3.boxes[0].next_scene = city_part_4_8_4
-city_part_4_8_4.boxes[0].next_scene = city_part_4_8_3
+city_part_4_8_3.boxes[1].next_scene = city_part_4_8_3_letter
+city_part_4_8_3_letter.boxes[0].next_scene = city_part_4_8_3

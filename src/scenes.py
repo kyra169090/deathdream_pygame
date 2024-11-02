@@ -563,20 +563,12 @@ class CityPart4Cave1(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=265, y=320, width=600, height=450, next_scene=None)
+            Box(x=265, y=320, width=600, height=380, next_scene=None),
+            Box(x=850, y=840, width=200, height=120, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
 
-class CityPart4Cave2(Node):
-    def __init__(self, background_image):
-        super().__init__(background_image)
-        # slot for the dark entrance, no entering, only action
-        self.boxes = [
-            Box(x=0, y=924, width=1500, height=100, next_scene=None)
-        ]
-    def render(self, screen, inventory):
-        super().render(screen, inventory)
 
 class CityPart4Cave1Letter(Node):
     def __init__(self, background_image):
@@ -592,3 +584,54 @@ class CityPart4Cave1Letter(Node):
         if not self.paper_sound_played:
             self.paper_sound.play()
             self.paper_sound_played = True
+
+class CityPart4Cave2(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.doom_sound_played = False
+        self.doom_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/doom.mp3')
+        self.flicker_duration = 2000  # Total time for flickering in ms
+        self.flicker_interval = 30  # Time between flickers in ms
+        self.flicker_delay = 1000  # Delay before flickering starts, in ms
+        self.flicker_delay_start = None  # Start time of the delay
+        self.flicker_start_time = None  # Timer for when flickering starts
+        self.darkness_timer = None  # Timer for transitioning to full darkness
+        self.flicker_enabled = False  # Flickering enabled only after delay
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+        # Play sound and start flicker delay timer
+        if not self.doom_sound_played:
+            self.doom_sound.play()
+            self.doom_sound_played = True
+            self.flicker_delay_start = pygame.time.get_ticks()  # Start delay timer
+
+        # Calculate the time elapsed since the delay started
+        current_time = pygame.time.get_ticks()
+
+        # Start flickering effect after the delay
+        if self.flicker_delay_start is not None and not self.flicker_enabled:
+            if current_time - self.flicker_delay_start >= self.flicker_delay:
+                self.flicker_enabled = True
+                self.flicker_start_time = current_time  # Set flicker start time after delay
+
+        # Flickering effect
+        if self.flicker_enabled and self.flicker_start_time is not None:
+            if current_time - self.flicker_start_time < self.flicker_duration:
+                # Alternate between background image and black screen
+                if (current_time // self.flicker_interval) % 2 == 0:
+                    screen.blit(self.background_image, (0, 0))
+                else:
+                    screen.fill((0, 0, 0))  # Flicker to black
+            else:
+                # End flickering and set timer for transitioning to full darkness once
+                self.flicker_enabled = False
+                if self.darkness_timer is None:
+                    self.darkness_timer = pygame.time.get_ticks()
+
+        # Transition to pitch black after flickering ends
+        if self.darkness_timer is not None:
+            # Wait a short time (e.g., 500 ms) before going fully black
+            if current_time - self.darkness_timer > 500:
+                screen.fill((0, 0, 0))
