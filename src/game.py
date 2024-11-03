@@ -20,10 +20,10 @@ class Game:
             pygame.mixer.music.play(-1)
         except:
             pass
-        from scene_manager import city_part4_familyhouse
+        from scene_manager import start_scene   # Normally: start_scene, when testing: city_part_4_8_3
 
         # Start with location1
-        self.current_scene = city_part4_familyhouse
+        self.current_scene = start_scene   # Normally: start_scene, when testing: city_part_4_8_3
         self.inventory = Inventory()
 
 
@@ -82,8 +82,10 @@ class Game:
                     hover = True
                     break
 
-            # Render the current scene first
-            self.current_scene.render(self.screen, self.inventory)
+            # Check if the current scene has changed
+            new_scene = self.current_scene.render(self.screen, self.inventory)
+            if new_scene is not None:
+                self.current_scene = new_scene
 
             if hover:
                 pygame.mouse.set_visible(False)

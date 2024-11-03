@@ -36,8 +36,12 @@ city_part4_familyhousebasement2 = CityPart4FamilyHouseBasement2(pygame.image.loa
 city_part4_familyhousebasement3 = CityPart4FamilyHouseBasement3(pygame.image.load('../assets/images/scenes/location4/city_part_4_9.jpg'))
 city_part4_familyhousebasement3letter = CityPart4FamilyHouseBasement3Letter(pygame.image.load('../assets/images/scenes/location4/city_part_4_9_letter.jpg'))
 city_part_4_8_3 = CityPart4Cave1(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_3.jpg'))
-city_part_4_8_4 = CityPart4Cave2(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_4.jpg'))
 city_part_4_8_3_letter = CityPart4Cave1Letter(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_3_letter.jpg'))
+
+# City Part5
+city_part_5_1 = CityPart5Street1(pygame.image.load('../assets/images/scenes/location5/city_part_5_1.jpg'))
+city_part_4_8_4 = CityPart4Cave2(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_4.jpg'), next_scene=city_part_5_1)
+
 
 
 # Link scenes to boxes (after they are created)

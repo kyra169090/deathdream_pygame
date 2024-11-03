@@ -585,53 +585,77 @@ class CityPart4Cave1Letter(Node):
             self.paper_sound.play()
             self.paper_sound_played = True
 
+
 class CityPart4Cave2(Node):
-    def __init__(self, background_image):
+    def __init__(self, background_image, next_scene):
         super().__init__(background_image)
         self.doom_sound_played = False
         self.doom_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/doom.mp3')
-        self.flicker_duration = 2000  # Total time for flickering in ms
+        self.flicker_duration = 2000
         self.flicker_interval = 30  # Time between flickers in ms
-        self.flicker_delay = 1000  # Delay before flickering starts, in ms
-        self.flicker_delay_start = None  # Start time of the delay
-        self.flicker_start_time = None  # Timer for when flickering starts
-        self.darkness_timer = None  # Timer for transitioning to full darkness
-        self.flicker_enabled = False  # Flickering enabled only after delay
+        self.flicker_start_time = None
+        self.darkness_timer = None
+        self.flicker_enabled = True
+        self.next_scene = next_scene
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
 
-        # Play sound and start flicker delay timer
+        # Initial sound and flicker start delay
         if not self.doom_sound_played:
             self.doom_sound.play()
             self.doom_sound_played = True
-            self.flicker_delay_start = pygame.time.get_ticks()  # Start delay timer
+            self.flicker_start_time = pygame.time.get_ticks() + 1000  # Delay of 1000 ms before flickering starts
 
-        # Calculate the time elapsed since the delay started
         current_time = pygame.time.get_ticks()
 
-        # Start flickering effect after the delay
-        if self.flicker_delay_start is not None and not self.flicker_enabled:
-            if current_time - self.flicker_delay_start >= self.flicker_delay:
-                self.flicker_enabled = True
-                self.flicker_start_time = current_time  # Set flicker start time after delay
-
         # Flickering effect
-        if self.flicker_enabled and self.flicker_start_time is not None:
+        if self.flicker_enabled and current_time >= self.flicker_start_time:
             if current_time - self.flicker_start_time < self.flicker_duration:
-                # Alternate between background image and black screen
                 if (current_time // self.flicker_interval) % 2 == 0:
                     screen.blit(self.background_image, (0, 0))
                 else:
                     screen.fill((0, 0, 0))  # Flicker to black
             else:
-                # End flickering and set timer for transitioning to full darkness once
                 self.flicker_enabled = False
-                if self.darkness_timer is None:
-                    self.darkness_timer = pygame.time.get_ticks()
+                self.darkness_timer = pygame.time.get_ticks()
 
-        # Transition to pitch black after flickering ends
-        if self.darkness_timer is not None:
-            # Wait a short time (e.g., 500 ms) before going fully black
+        # Transition to pitch black, then switch to next scene after 2 seconds
+        elif self.darkness_timer is not None:
             if current_time - self.darkness_timer > 500:
                 screen.fill((0, 0, 0))
+                if current_time - self.darkness_timer > 4000:  # Wait 4 seconds, then switch to next scene
+                    return self.next_scene
+
+class CityPart5Street1(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=265, y=320, width=600, height=380, next_scene=None),
+            Box(x=850, y=840, width=200, height=120, next_scene=None)
+        ]
+        self.fade_alpha = 255  # Start fully opaque
+        self.fade_duration = 2000  # 2 seconds (2000 milliseconds)
+        self.fade_start_time = None
+
+    def render(self, screen, inventory):
+        # Capture the fade start time if this is the first frame
+        if self.fade_start_time is None:
+            self.fade_start_time = pygame.time.get_ticks()
+
+        # Render the scene normally
+        super().render(screen, inventory)
+
+        # Calculate how much time has passed since fade started
+        elapsed_time = pygame.time.get_ticks() - self.fade_start_time
+        fade_progress = min(elapsed_time / self.fade_duration, 1)
+
+        # Update fade_alpha based on progress (0 to 255)
+        self.fade_alpha = 255 * (1 - fade_progress)
+
+        # Apply black overlay with decreasing transparency
+        if self.fade_alpha > 0:
+            black_overlay = pygame.Surface(screen.get_size())
+            black_overlay.fill((0, 0, 0))
+            black_overlay.set_alpha(self.fade_alpha)
+            screen.blit(black_overlay, (0, 0))
