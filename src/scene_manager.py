@@ -44,7 +44,10 @@ city_part_4_8_4 = CityPart4Cave2(pygame.image.load('../assets/images/scenes/loca
 city_part_5_1_1 = CityPart5Street1Shop(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_1.jpg'))
 city_part_5_1_2 = CityPart5Street2(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_2.jpg'))
 city_part_5_1_3 = CityPart5Street3(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_3.jpg'))
-city_part_5_1_4 = CityPart5Apartments(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_4.jpg'))
+city_part_5_1_5 = CityPart5Apartments2(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_5.jpg'))
+city_part_5_1_4 = CityPart5Apartments(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_4.jpg'), pygame.image.load('../assets/images/scenes/location5/city_part_5_1_4_after.jpg'), next_scene=city_part_5_1_5)
+city_part_5_1_6 = CityPart5ApartmentsRoom(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_6.jpg'))
+city_part_5_1_7 = CityPart5ApartmentsRoomSuitcase(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7.jpg'))
 city_part_5_2_2 = CityPart5BusStation(pygame.image.load('../assets/images/scenes/location5/city_part_5_2_2.jpg'))
 
 
@@ -113,3 +116,7 @@ city_part_5_1_2.boxes[1].next_scene = city_part_5_1_3
 city_part_5_1_3.boxes[0].next_scene = city_part_5_1_2
 city_part_5_1_3.boxes[1].next_scene = city_part_5_1_4
 city_part_5_1_4.boxes[0].next_scene = city_part_5_1_3
+city_part_5_1_5.boxes[0].next_scene = city_part_5_1_4
+city_part_5_1_5.boxes[1].next_scene = city_part_5_1_6
+city_part_5_1_6.boxes[0].next_scene = city_part_5_1_5
+city_part_5_1_6.boxes[1].next_scene = city_part_5_1_7

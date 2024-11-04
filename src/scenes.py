@@ -706,10 +706,59 @@ class CityPart5Street3(Node):
         super().render(screen, inventory)
 
 class CityPart5Apartments(Node):
+    def __init__(self, background_image, changed_background_image, next_scene):
+        super().__init__(background_image, changed_background_image)
+        self.ladder_used = False
+        self.slots = [
+            Slot(x=1000, y=200, width=300, height=400, required_item="Ladder", action=self.use_ladder)
+        ]
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None)
+        ]
+        self.next_scene = next_scene
+        self.new_box = None
+
+    def use_ladder(self):
+        # Change the background image to show the lit room
+        if not self.ladder_used and self.changed_background_image:
+            self.background_image = self.changed_background_image
+            self.ladder_used = True
+            self.add_new_box()
+
+    def add_new_box(self):
+        if self.ladder_used and not self.new_box:
+            self.new_box = Box(x=940, y=220, width=270, height=450, next_scene=self.next_scene)
+            self.boxes.append(self.new_box)
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5Apartments2(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=0, y=910, width=1500, height=114, next_scene=None)
+            Box(x=0, y=910, width=1500, height=114, next_scene=None),
+            Box(x=1000, y=300, width=300, height=400, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsRoom(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None),
+            Box(x=1130, y=430, width=200, height=150, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsRoomSuitcase(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None),
+            Box(x=1130, y=430, width=200, height=150, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
