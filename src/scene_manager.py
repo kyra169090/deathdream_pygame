@@ -41,7 +41,11 @@ city_part_4_8_3_letter = CityPart4Cave1Letter(pygame.image.load('../assets/image
 # City Part5
 city_part_5_1 = CityPart5Street1(pygame.image.load('../assets/images/scenes/location5/city_part_5_1.jpg'))
 city_part_4_8_4 = CityPart4Cave2(pygame.image.load('../assets/images/scenes/location4/city_part_4_8_4.jpg'), next_scene=city_part_5_1)
-
+city_part_5_1_1 = CityPart5Street1Shop(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_1.jpg'))
+city_part_5_1_2 = CityPart5Street2(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_2.jpg'))
+city_part_5_1_3 = CityPart5Street3(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_3.jpg'))
+city_part_5_1_4 = CityPart5Apartments(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_4.jpg'))
+city_part_5_2_2 = CityPart5BusStation(pygame.image.load('../assets/images/scenes/location5/city_part_5_2_2.jpg'))
 
 
 # Link scenes to boxes (after they are created)
@@ -98,3 +102,14 @@ city_part4_familyhousebasementholeintheground.boxes[1].next_scene = city_part_4_
 city_part_4_8_3.boxes[0].next_scene = city_part_4_8_4
 city_part_4_8_3.boxes[1].next_scene = city_part_4_8_3_letter
 city_part_4_8_3_letter.boxes[0].next_scene = city_part_4_8_3
+
+city_part_5_1.boxes[0].next_scene = city_part_5_2_2
+city_part_5_1.boxes[1].next_scene = city_part_5_1_1
+city_part_5_1.boxes[2].next_scene = city_part_5_1_2
+city_part_5_2_2.boxes[0].next_scene = city_part_5_1
+city_part_5_1_1.boxes[0].next_scene = city_part_5_1
+city_part_5_1_2.boxes[0].next_scene = city_part_5_1
+city_part_5_1_2.boxes[1].next_scene = city_part_5_1_3
+city_part_5_1_3.boxes[0].next_scene = city_part_5_1_2
+city_part_5_1_3.boxes[1].next_scene = city_part_5_1_4
+city_part_5_1_4.boxes[0].next_scene = city_part_5_1_3

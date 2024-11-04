@@ -631,8 +631,9 @@ class CityPart5Street1(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
         self.boxes = [
-            Box(x=265, y=320, width=600, height=380, next_scene=None),
-            Box(x=850, y=840, width=200, height=120, next_scene=None)
+            Box(x=50, y=320, width=300, height=400, next_scene=None),
+            Box(x=600, y=500, width=350, height=300, next_scene=None),
+            Box(x=1150, y=600, width=300, height=300, next_scene=None)
         ]
         self.fade_alpha = 255  # Start fully opaque
         self.fade_duration = 2000  # 2 seconds (2000 milliseconds)
@@ -659,3 +660,56 @@ class CityPart5Street1(Node):
             black_overlay.fill((0, 0, 0))
             black_overlay.set_alpha(self.fade_alpha)
             screen.blit(black_overlay, (0, 0))
+
+
+class CityPart5BusStation(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+
+class CityPart5Street1Shop(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None)
+        ]
+        self.objects = [
+            GameObject(name="Ladder", image_path="../assets/images/scenes/location5/png/ladder.png", x=280, y=700,
+                       width=584, height=205)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5Street2(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None),
+            Box(x=1000, y=750, width=300, height=250, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5Street3(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None),
+            Box(x=600, y=650, width=500, height=200, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5Apartments(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
