@@ -758,7 +758,82 @@ class CityPart5ApartmentsRoomSuitcase(Node):
         super().__init__(background_image)
         self.boxes = [
             Box(x=0, y=910, width=1500, height=114, next_scene=None),
-            Box(x=1130, y=430, width=200, height=150, next_scene=None)
+            Box(x=80, y=440, width=200, height=250, next_scene=None)
+        ]
+        self.objects = [
+            GameObject(name="Busticket", image_path="../assets/images/scenes/location5/png/ticket.png", x=540, y=300,
+                   width=205, height=165)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+
+class CityPart5ApartmentsTelephone1(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None),
+            Box(x=490, y=170, width=550, height=710, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsTelephone2(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            # 5 SMS
+            Box(x=950, y=930, width=150, height=150, next_scene=None),
+            Box(x=510, y=340, width=540, height=100, next_scene=None),
+            Box(x=510, y=445, width=540, height=100, next_scene=None),
+            Box(x=510, y=570, width=540, height=100, next_scene=None),
+            Box(x=510, y=700, width=540, height=100, next_scene=None),
+            Box(x=510, y=810, width=540, height=100, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsSMS1(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=950, y=930, width=150, height=150, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsSMS2(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=950, y=930, width=150, height=150, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsSMS3(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=950, y=930, width=150, height=150, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsSMS4(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=950, y=930, width=150, height=150, next_scene=None)
+        ]
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+class CityPart5ApartmentsSMS5(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=950, y=930, width=150, height=150, next_scene=None)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)

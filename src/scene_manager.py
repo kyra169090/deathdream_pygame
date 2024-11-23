@@ -48,6 +48,13 @@ city_part_5_1_5 = CityPart5Apartments2(pygame.image.load('../assets/images/scene
 city_part_5_1_4 = CityPart5Apartments(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_4.jpg'), pygame.image.load('../assets/images/scenes/location5/city_part_5_1_4_after.jpg'), next_scene=city_part_5_1_5)
 city_part_5_1_6 = CityPart5ApartmentsRoom(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_6.jpg'))
 city_part_5_1_7 = CityPart5ApartmentsRoomSuitcase(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7.jpg'))
+city_part_5_1_7_2 = CityPart5ApartmentsTelephone1(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2.jpg'))
+city_part_5_1_7_2_menu = CityPart5ApartmentsTelephone2(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_menu.jpg'))
+city_part_5_1_7_2_sms_1 = CityPart5ApartmentsSMS1(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_1.jpg'))
+city_part_5_1_7_2_sms_2 = CityPart5ApartmentsSMS2(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_2.jpg'))
+city_part_5_1_7_2_sms_3 = CityPart5ApartmentsSMS3(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_3.jpg'))
+city_part_5_1_7_2_sms_4 = CityPart5ApartmentsSMS4(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_4.jpg'))
+city_part_5_1_7_2_sms_5 = CityPart5ApartmentsSMS5(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_5.jpg'))
 city_part_5_2_2 = CityPart5BusStation(pygame.image.load('../assets/images/scenes/location5/city_part_5_2_2.jpg'))
 
 
@@ -120,3 +127,21 @@ city_part_5_1_5.boxes[0].next_scene = city_part_5_1_4
 city_part_5_1_5.boxes[1].next_scene = city_part_5_1_6
 city_part_5_1_6.boxes[0].next_scene = city_part_5_1_5
 city_part_5_1_6.boxes[1].next_scene = city_part_5_1_7
+# Suitcase part
+city_part_5_1_7.boxes[0].next_scene = city_part_5_1_6
+city_part_5_1_7.boxes[1].next_scene = city_part_5_1_7_2
+city_part_5_1_7_2.boxes[0].next_scene = city_part_5_1_7
+city_part_5_1_7_2.boxes[1].next_scene = city_part_5_1_7_2_menu
+city_part_5_1_7_2_menu.boxes[0].next_scene = city_part_5_1_7
+city_part_5_1_7_2_menu.boxes[1].next_scene = city_part_5_1_7_2_sms_1
+city_part_5_1_7_2_menu.boxes[2].next_scene = city_part_5_1_7_2_sms_2
+city_part_5_1_7_2_menu.boxes[3].next_scene = city_part_5_1_7_2_sms_3
+city_part_5_1_7_2_menu.boxes[4].next_scene = city_part_5_1_7_2_sms_4
+city_part_5_1_7_2_menu.boxes[5].next_scene = city_part_5_1_7_2_sms_5
+
+city_part_5_1_7_2_sms_1.boxes[0].next_scene = city_part_5_1_7_2_menu
+city_part_5_1_7_2_sms_2.boxes[0].next_scene = city_part_5_1_7_2_menu
+city_part_5_1_7_2_sms_3.boxes[0].next_scene = city_part_5_1_7_2_menu
+city_part_5_1_7_2_sms_4.boxes[0].next_scene = city_part_5_1_7_2_menu
+city_part_5_1_7_2_sms_5.boxes[0].next_scene = city_part_5_1_7_2_menu
+
