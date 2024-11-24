@@ -55,7 +55,7 @@ city_part_5_1_7_2_sms_2 = CityPart5ApartmentsSMS2(pygame.image.load('../assets/i
 city_part_5_1_7_2_sms_3 = CityPart5ApartmentsSMS3(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_3.jpg'))
 city_part_5_1_7_2_sms_4 = CityPart5ApartmentsSMS4(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_4.jpg'))
 city_part_5_1_7_2_sms_5 = CityPart5ApartmentsSMS5(pygame.image.load('../assets/images/scenes/location5/city_part_5_1_7_2_sms_5.jpg'))
-city_part_5_2_2 = CityPart5BusStation(pygame.image.load('../assets/images/scenes/location5/city_part_5_2_2.jpg'))
+city_part_5_2_2 = CityPart5BusStation(pygame.image.load('../assets/images/scenes/location5/city_part_5_2_2.jpg'), bus_image_path='../assets/images/scenes/location5/png/bus.png')
 
 
 # Link scenes to boxes (after they are created)

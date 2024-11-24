@@ -662,16 +662,6 @@ class CityPart5Street1(Node):
             screen.blit(black_overlay, (0, 0))
 
 
-class CityPart5BusStation(Node):
-    def __init__(self, background_image):
-        super().__init__(background_image)
-        self.boxes = [
-            Box(x=0, y=910, width=1500, height=114, next_scene=None)
-        ]
-    def render(self, screen, inventory):
-        super().render(screen, inventory)
-
-
 class CityPart5Street1Shop(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
@@ -762,7 +752,7 @@ class CityPart5ApartmentsRoomSuitcase(Node):
         ]
         self.objects = [
             GameObject(name="Busticket", image_path="../assets/images/scenes/location5/png/ticket.png", x=540, y=300,
-                   width=205, height=165)
+                   width=190, height=150)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -837,3 +827,31 @@ class CityPart5ApartmentsSMS5(Node):
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
+
+class CityPart5BusStation(Node):
+    def __init__(self, background_image, bus_image_path):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=910, width=1500, height=114, next_scene=None)
+        ]
+        self.bus_image = pygame.image.load(bus_image_path).convert_alpha()
+        self.bus_x = 950
+        self.bus_y = 690
+        self.fade_alpha = 0  # Alpha value starts at 0 (fully transparent)
+        self.fade_speed = 1
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+
+        if any(item.name == "Busticket" for item in inventory.items):
+            if self.fade_alpha < 255:  # Incrementally increase alpha until fully opaque
+                self.fade_alpha += self.fade_speed
+                if self.fade_alpha > 255:
+                    self.fade_alpha = 255  # Cap at 255
+
+            # Create a copy of the bus image with transparency
+            bus_with_alpha = self.bus_image.copy()
+            bus_with_alpha.fill((255, 255, 255, self.fade_alpha), special_flags=pygame.BLEND_RGBA_MULT)
+
+            # Blit the bus image onto the screen
+            screen.blit(bus_with_alpha, (self.bus_x, self.bus_y))
