@@ -977,6 +977,23 @@ class CityPart5BusInside(Node):
 class BusDriver(Node):
     def __init__(self, background_image):
         super().__init__(background_image)
+        self.dialogue_started = False
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if not self.dialogue_started:
+            self.start_dialogue([
+                ("...", (255, 255, 255)),
+                ("Hi! You are the first living creature I have seen here so far...", (255, 255, 255)),
+                ("Can I disturb you while you are driving?", (255, 255, 255)),
+                ("I am so lonely and lost here...", (255, 255, 255)),
+                ("Sure!", (255, 182, 193)),
+                ("I know how you are feeling.", (255, 182, 193)),
+                ("I will take you where you belong, because this is definitely not it.", (255, 182, 193)),
+                ("Let's go then.", (255, 182, 193)),
+
+            ])
+            self.dialogue_started = True

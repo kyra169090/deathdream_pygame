@@ -58,17 +58,23 @@ class Node:
 
         inventory.render(screen)
 
+        # Render dialogue if it's active
         if self.show_dialogue and self.dialogue_queue:
-            self.render_text(screen, self.dialogue_queue[0])
+            dialogue_entry = self.dialogue_queue[0]  # Get the first dialogue in the queue
+            self.render_text(screen, dialogue_entry["text"], dialogue_entry["color"])
 
-    def render_text(self, screen, text):
+    def render_text(self, screen, text, color=(255, 255, 255)):
         pygame.draw.rect(screen, (0, 0, 0), self.text_rect)
-        rendered_text = self.font.render(text, True, (255, 255, 255))
+        rendered_text = self.font.render(text, True, color)
         screen.blit(rendered_text, (self.text_rect.x + 10, self.text_rect.y + 10))
 
-    def start_dialogue(self, dialogue_list):
+    def start_dialogue(self, dialogue):
         """Start a sequence of dialogues."""
-        self.dialogue_queue = dialogue_list
+        self.dialogue_queue = [
+        {"text": entry[0], "color": entry[1]} if isinstance(entry, tuple) else {"text": entry, "color": (255, 255, 255)}
+        for entry in dialogue
+        ]
+        self.current_dialogue_index = 0
         self.show_dialogue = True
 
     def click_dialogue(self):
