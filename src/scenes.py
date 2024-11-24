@@ -867,11 +867,12 @@ class CityPart5BusStation(Node):
         self.bus_x = 950
         self.bus_y = 690
         self.fade_alpha = 0  # Alpha value starts at 0 (fully transparent)
-        self.fade_speed = 1
+        self.fade_speed = 0.5
         self.dialogue_started = False
         self.dialogue_finished = False
         self.next_scene = next_scene
         self.new_box = None
+        self.bus_arrival_sound = pygame.mixer.Sound('../assets/sounds/bus_arrival.mp3')
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -930,11 +931,12 @@ class CityPart5BusStation(Node):
 
     def add_new_box(self):
         if self.dialogue_finished and not self.new_box:
+            self.bus_arrival_sound.play()
             self.new_box = Box(x=950, y=690, width=485, height=323, next_scene=self.next_scene)
             self.boxes.append(self.new_box)
 
 class CityPart5BusInside(Node):
-    def __init__(self, background_image):
+    def __init__(self, background_image, next_scene):
         super().__init__(background_image)
         self.boxes = [
             Box(x=0, y=920, width=1500, height=104, next_scene=None)
@@ -942,9 +944,23 @@ class CityPart5BusInside(Node):
         self.slots = [
             Slot(x=1240, y=410, width=250, height=150, required_item="Busticket", action=self.use_busticket)
         ]
+        self.next_scene = next_scene
+        self.ticket_used = False
 
     def use_busticket(self):
-        pass
+        self.ticket_used = True
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
+        if self.ticket_used:
+            return self.next_scene
+
+        # Otherwise, continue rendering the current scene
+        return None
+
+class BusDriver(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
