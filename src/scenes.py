@@ -19,18 +19,19 @@ class Start(Node):
             Box(x=0, y=924, width=600, height=100, next_scene=None),
             Box(x=600, y=600, width=200, height=140, next_scene=None)  
         ]
-        self.show_dialogue = True
+        self.dialogue_started = False
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
         self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
-        if self.show_dialogue:
-            self.render_text(screen, "Where am I?")
-
-    def click_dialogue(self):
-        self.show_dialogue = False
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "Where am I?",
+                "And the strangest thing, why am I here right now?"
+            ])
+            self.dialogue_started = True
 
 # first house
 class CityPart1Door(Node):
@@ -280,8 +281,7 @@ class CityPart3CorridorWardrobe(Node):
         self.new_box = None
         self.unlocking_sound = pygame.mixer.Sound('../assets/sounds/unlocking.mp3')
         self.game_state = game_state
-        self.show_dialogue = False
-        self.dialogue_is_clicked = False
+        self.dialogue_started = False
 
     def use_key(self):
         # Change the background image to show the lit room
@@ -305,18 +305,14 @@ class CityPart3CorridorWardrobe(Node):
         super().render(screen, inventory)
         if self.game_state.paper1_collected and self.game_state.paper2_collected and self.game_state.paper3_collected:
             self.game_state.all_papers_collected = True
-            if not self.dialogue_is_clicked:
-                self.show_dialogue = True
-                self.check_dialogue(screen)
+            self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
-        if self.show_dialogue:
-            self.render_text(screen, "I had enough, this house is scaring me! I want to leave this place, now!")
-
-    def click_dialogue(self):
-        if self.game_state.all_papers_collected:
-            self.show_dialogue = False
-            self.dialogue_is_clicked = True
+        if not self.dialogue_started and self.game_state.all_papers_collected:
+            self.start_dialogue([
+                "I had enough, this house is scaring me! I want to leave this place, now!",
+            ])
+            self.dialogue_started = True
 
 class CityPart3Photo1(Node):
     def __init__(self, background_image, game_state):
@@ -404,18 +400,19 @@ class CityPart4FamilyHouse(Node):
         self.boxes = [
             Box(x=1180, y=580, width=300, height=200, next_scene=None)
         ]
-        self.show_dialogue = True
+        self.dialogue_started = False
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
         self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
-        if self.show_dialogue:
-            self.render_text(screen, "I know this place.... I grew up in this house... but I could not recognize the street at all?!")
-
-    def click_dialogue(self):
-        self.show_dialogue = False
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "I know this place.... I grew up in this house... ",
+                "But I could not recognize the street at all?!"
+            ])
+            self.dialogue_started = True
 
 class CityPart4FamilyHouseYard(Node):
     def __init__(self, background_image):
@@ -467,18 +464,18 @@ class CityPart4FamilyHouseBasement(Node):
             Box(x=610, y=280, width=300, height=200, next_scene=None),
             Box(x=0, y=900, width=1000, height=124, next_scene=None)
         ]
-        self.show_dialogue = True
+        self.dialogue_started = False
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
         self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
-        if self.show_dialogue:
-            self.render_text(screen,"What the heck is this? We never had a basement.")
-
-    def click_dialogue(self):
-        self.show_dialogue = False
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "What the heck is this? We never had a basement."
+            ])
+            self.dialogue_started = True
 
 class CityPart4FamilyHouseBasement2(Node):
     def __init__(self, background_image, changed_background_image, next_scene):
@@ -520,19 +517,19 @@ class CityPart4FamilyHouseBasement3(Node):
             Box(x=450, y=370, width=300, height=200, next_scene=None),
             Box(x=950, y=700, width=150, height=120, next_scene=None)
         ]
-        self.show_dialogue = True
+        self.dialogue_started = False
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
         self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
-        if self.show_dialogue:
-            self.render_text(screen,
-                             "Why are these desks and benches here? It looks like a secret place for a gathering")
-
-    def click_dialogue(self):
-        self.show_dialogue = False
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "Why are these desks and benches here?",
+                "It looks like a secret place for a gathering."
+            ])
+            self.dialogue_started = True
 
 class CityPart4FamilyHouseBasement3Letter(Node):
     def __init__(self, background_image):
@@ -638,6 +635,7 @@ class CityPart5Street1(Node):
         self.fade_alpha = 255  # Start fully opaque
         self.fade_duration = 2000  # 2 seconds (2000 milliseconds)
         self.fade_start_time = None
+        self.dialogue_started = False
 
     def render(self, screen, inventory):
         # Capture the fade start time if this is the first frame
@@ -646,6 +644,7 @@ class CityPart5Street1(Node):
 
         # Render the scene normally
         super().render(screen, inventory)
+        self.check_dialogue(screen)
 
         # Calculate how much time has passed since fade started
         elapsed_time = pygame.time.get_ticks() - self.fade_start_time
@@ -661,6 +660,13 @@ class CityPart5Street1(Node):
             black_overlay.set_alpha(self.fade_alpha)
             screen.blit(black_overlay, (0, 0))
 
+    def check_dialogue(self, screen):
+        if not self.dialogue_started and self.fade_alpha <= 0:
+            self.start_dialogue([
+                "Have I escaped?",
+                "I have not escaped at all... It's still that dream, just in a different place. What now?"
+            ])
+            self.dialogue_started = True
 
 class CityPart5Street1Shop(Node):
     def __init__(self, background_image):

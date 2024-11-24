@@ -37,6 +37,7 @@ class Node:
         pygame.font.init()
         self.font = pygame.font.Font(None, 50)
         self.text_rect = pygame.Rect(50, 10, 1400, 70)
+        self.dialogue_queue = []
         self.show_dialogue = False
 
     def render(self, screen, inventory):
@@ -57,10 +58,22 @@ class Node:
 
         inventory.render(screen)
 
+        if self.show_dialogue and self.dialogue_queue:
+            self.render_text(screen, self.dialogue_queue[0])
+
     def render_text(self, screen, text):
         pygame.draw.rect(screen, (0, 0, 0), self.text_rect)
         rendered_text = self.font.render(text, True, (255, 255, 255))
         screen.blit(rendered_text, (self.text_rect.x + 10, self.text_rect.y + 10))
 
+    def start_dialogue(self, dialogue_list):
+        """Start a sequence of dialogues."""
+        self.dialogue_queue = dialogue_list
+        self.show_dialogue = True
+
     def click_dialogue(self):
-        pass
+        """Handle dialogue clicking to progress or end."""
+        if self.dialogue_queue:
+            self.dialogue_queue.pop(0)  # Remove the current dialogue
+            if not self.dialogue_queue:  # No more dialogues
+                self.show_dialogue = False
