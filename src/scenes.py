@@ -746,8 +746,18 @@ class CityPart5ApartmentsRoom(Node):
             Box(x=0, y=910, width=1500, height=114, next_scene=None),
             Box(x=1130, y=430, width=200, height=150, next_scene=None)
         ]
+        self.dialogue_started = False
+
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "This is my old apartment! I see my stuff all around"
+            ])
+            self.dialogue_started = True
 
 class CityPart5ApartmentsRoomSuitcase(Node):
     def __init__(self, background_image):
@@ -756,13 +766,26 @@ class CityPart5ApartmentsRoomSuitcase(Node):
             Box(x=0, y=910, width=1500, height=114, next_scene=None),
             Box(x=80, y=440, width=200, height=250, next_scene=None)
         ]
+        self.dialogue_started = False
+        self.phone_sound = pygame.mixer.Sound('../assets/sounds/citypart5room/sms_arrived.mp3')
+
         self.objects = [
             GameObject(name="Busticket", image_path="../assets/images/scenes/location5/png/ticket.png", x=540, y=300,
                    width=190, height=150)
         ]
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
 
+    def check_dialogue(self, screen):
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "My old phone!",
+                "..."
+            ])
+            self.dialogue_started = True
+            self.phone_sound.play()
+            self.phone_sound_played = True
 
 class CityPart5ApartmentsTelephone1(Node):
     def __init__(self, background_image):
@@ -845,11 +868,50 @@ class CityPart5BusStation(Node):
         self.bus_y = 690
         self.fade_alpha = 0  # Alpha value starts at 0 (fully transparent)
         self.fade_speed = 1
+        self.dialogue_started = False
+        self.dialogue_finished = False
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
-
         if any(item.name == "Busticket" for item in inventory.items):
+            self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "...",
+                "Okay, let's wait...",
+                "Maybe some bus will come? ",
+                "Not that I saw any living-moving thing so far...",
+                "...",
+                "There is a clock, but it is not moving also I guess...",
+                "...",
+                "Now that I am thinking...",
+                "This feels like a dream, but I don't remember what I have in the real life, ...",
+                "it's so strange.",
+                "What do I work?",
+                "Where do I live?",
+                "Do I have a soulmate or friends?",
+                "I can't remember.",
+                "...",
+                "But I recognized our old house and my old apartment and mobile phone,",
+                "that means something...",
+                "Too bad that I can't link anything good to them.",
+                "And I just hope I can wake up somehow and escape this.",
+                "Because this is unbearable.",
+                "I am so scared, it is unbearable.",
+                "Everything is just scaring me here, and there is no one to run to or talk to.",
+                "I have this bus ticket, but where do I go, even if some bus comes?",
+                "I don't even know where to get off...",
+                "...",
+                "A bus has arrived!"
+            ])
+            self.dialogue_started = True
+
+        if self.dialogue_started and not self.dialogue_finished:
+            self.dialogue_finished = not self.show_dialogue  # `show_dialogue` becomes False when the dialogue ends
+
+        if self.dialogue_finished:
             if self.fade_alpha < 255:  # Incrementally increase alpha until fully opaque
                 self.fade_alpha += self.fade_speed
                 if self.fade_alpha > 255:
