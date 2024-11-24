@@ -858,7 +858,7 @@ class CityPart5ApartmentsSMS5(Node):
         super().render(screen, inventory)
 
 class CityPart5BusStation(Node):
-    def __init__(self, background_image, bus_image_path):
+    def __init__(self, background_image, bus_image_path, next_scene):
         super().__init__(background_image)
         self.boxes = [
             Box(x=0, y=910, width=1500, height=114, next_scene=None)
@@ -870,6 +870,8 @@ class CityPart5BusStation(Node):
         self.fade_speed = 1
         self.dialogue_started = False
         self.dialogue_finished = False
+        self.next_scene = next_scene
+        self.new_box = None
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -923,3 +925,26 @@ class CityPart5BusStation(Node):
 
             # Blit the bus image onto the screen
             screen.blit(bus_with_alpha, (self.bus_x, self.bus_y))
+
+            self.add_new_box()
+
+    def add_new_box(self):
+        if self.dialogue_finished and not self.new_box:
+            self.new_box = Box(x=950, y=690, width=485, height=323, next_scene=self.next_scene)
+            self.boxes.append(self.new_box)
+
+class CityPart5BusInside(Node):
+    def __init__(self, background_image):
+        super().__init__(background_image)
+        self.boxes = [
+            Box(x=0, y=920, width=1500, height=104, next_scene=None)
+        ]
+        self.slots = [
+            Slot(x=1240, y=410, width=250, height=150, required_item="Busticket", action=self.use_busticket)
+        ]
+
+    def use_busticket(self):
+        pass
+
+    def render(self, screen, inventory):
+        super().render(screen, inventory)
