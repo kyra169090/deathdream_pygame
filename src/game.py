@@ -18,14 +18,15 @@ class Game:
             pygame.mixer.init()
             pygame.mixer.music.load('../assets/sounds/background_music.mp3')
             pygame.mixer.music.play(-1)
-        except:
-            pass
-        from scene_manager import city_part_4_8_3   # Normally: start_scene, when testing: city_part_4_8_3
+        except Exception as e:
+            print(f"Music loading error: {e}")
+
+        from scene_manager import city_part_5_1_1   # Normally: start_scene, when testing: city_part_5_1_1
 
         # Start with location1
-        self.current_scene = city_part_4_8_3   # Normally: start_scene, when testing: city_part_4_8_3
+        self.current_scene = city_part_5_1_1   # Normally: start_scene, when testing: city_part_5_1_1
         self.inventory = Inventory()
-
+        self.clock = pygame.time.Clock()
 
     def run(self):
         running = True
@@ -33,6 +34,9 @@ class Game:
         hand_cursor = pygame.image.load('../assets/images/other/pointer.png')
         
         while running:
+            delta_time = self.clock.tick(60)
+            if hasattr(self.current_scene, 'update'):
+                self.current_scene.update(delta_time)
             moving_mouse_pos = pygame.mouse.get_pos()
             # print(moving_mouse_pos)
             hover = False

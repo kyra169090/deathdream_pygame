@@ -40,6 +40,9 @@ class Node:
         self.dialogue_queue = []
         self.show_dialogue = False
 
+    def update(self, delta_time):
+        pass  # Default behavior: do nothing
+
     def render(self, screen, inventory):
         screen.blit(self.background_image, (0, 0))
         # Draw boxes

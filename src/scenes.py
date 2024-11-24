@@ -1,6 +1,7 @@
 import pygame
 from objects import GameObject
 from slots_n_boxes import Slot, Box, Node
+import os
 
 class GameState:
     def __init__(self):
@@ -867,7 +868,7 @@ class CityPart5BusStation(Node):
         self.bus_x = 950
         self.bus_y = 690
         self.fade_alpha = 0  # Alpha value starts at 0 (fully transparent)
-        self.fade_speed = 0.5
+        self.fade_speed = 0.9
         self.dialogue_started = False
         self.dialogue_finished = False
         self.next_scene = next_scene
@@ -975,12 +976,33 @@ class CityPart5BusInside(Node):
         return None
 
 class BusDriver(Node):
-    def __init__(self, background_image):
+    def __init__(self, background_image, frame_folder, position):
         super().__init__(background_image)
         self.dialogue_started = False
+        self.frames = []
+        self.load_frames(frame_folder)
+        self.current_frame = 0
+        self.position = position
+        self.frame_timer = 0  # To control animation speed
+        self.frame_delay = 150  # Delay in milliseconds between frames
+
+    def load_frames(self, folder):
+        """Load all image frames from the folder."""
+        for filename in sorted(os.listdir(folder)):  # Ensure frames are in the right order
+            path = os.path.join(folder, filename)
+            image = pygame.image.load(path).convert_alpha()  # Load with transparency
+            self.frames.append(image)
+
+    def update(self, delta_time):
+        """Update the frame based on time."""
+        self.frame_timer += delta_time
+        if self.frame_timer >= self.frame_delay:
+            self.frame_timer = 0
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        screen.blit(self.frames[self.current_frame], self.position)
         self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
