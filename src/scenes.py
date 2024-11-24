@@ -755,7 +755,7 @@ class CityPart5ApartmentsRoom(Node):
     def check_dialogue(self, screen):
         if not self.dialogue_started:
             self.start_dialogue([
-                "This is my old apartment! I see my stuff all around"
+                "This is my old apartment! I see my stuff all around."
             ])
             self.dialogue_started = True
 
@@ -946,13 +946,29 @@ class CityPart5BusInside(Node):
         ]
         self.next_scene = next_scene
         self.ticket_used = False
+        self.dialogue_started = False
+        self.dialogue_finished = False
 
     def use_busticket(self):
         self.ticket_used = True
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
-        if self.ticket_used:
+
+        # Handle dialogue progression
+        if self.ticket_used and not self.dialogue_started:
+            self.start_dialogue([
+                "...",
+                "I can talk with the driver, maybe...",
+                "He doesn't seem to be that creepy."
+            ])
+            self.dialogue_started = True
+
+        if self.dialogue_started and not self.dialogue_finished:
+            self.dialogue_finished = not self.show_dialogue  # Dialogue ends when `show_dialogue` is False
+
+        # Transition to the next scene once the dialogue is finished and ticket is used
+        if self.dialogue_finished and self.ticket_used:
             return self.next_scene
 
         # Otherwise, continue rendering the current scene
