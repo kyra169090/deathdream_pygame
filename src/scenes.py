@@ -979,6 +979,8 @@ class BusDriver(Node):
     def __init__(self, background_image, frame_folder, position):
         super().__init__(background_image)
         self.dialogue_started = False
+        self.dialogue_finished = False
+        self.current_dialogue_phase = 0
         self.frames = []
         self.load_frames(frame_folder)
         self.current_frame = 0
@@ -988,7 +990,7 @@ class BusDriver(Node):
 
     def load_frames(self, folder):
         """Load all image frames from the folder."""
-        for filename in sorted(os.listdir(folder)):  # Ensure frames are in the right order
+        for filename in sorted(os.listdir(folder)):
             path = os.path.join(folder, filename)
             image = pygame.image.load(path).convert_alpha()  # Load with transparency
             self.frames.append(image)
@@ -1002,20 +1004,60 @@ class BusDriver(Node):
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
-        screen.blit(self.frames[self.current_frame], self.position)
         self.check_dialogue(screen)
 
     def check_dialogue(self, screen):
-        if not self.dialogue_started:
-            self.start_dialogue([
-                ("...", (255, 255, 255)),
-                ("Hi! You are the first living creature I have seen here so far...", (255, 255, 255)),
-                ("Can I disturb you while you are driving?", (255, 255, 255)),
-                ("I am so lonely and lost here...", (255, 255, 255)),
-                ("Sure!", (255, 182, 193)),
-                ("I know how you are feeling.", (255, 182, 193)),
-                ("I will take you where you belong, because this is definitely not it.", (255, 182, 193)),
-                ("Let's go then.", (255, 182, 193)),
+        if self.current_dialogue_phase == 0:
+            if not self.dialogue_started:
+                self.start_dialogue([
+                    ("...", (255, 255, 255)),
+                    ("Hi! You are the first living creature I have seen here so far...", (255, 255, 255)),
+                    ("Can I disturb you while you are driving?", (255, 255, 255)),
+                    ("I am so lonely and lost here...", (255, 255, 255)),
+                    ("Sure!", (255, 182, 193)),
+                    ("I know how you are feeling.", (255, 182, 193)),
+                    ("I will take you where you belong, because this is definitely not it.", (255, 182, 193)),
+                    ("Let's go then.", (255, 182, 193)),
 
-            ])
-            self.dialogue_started = True
+                ])
+                self.dialogue_started = True
+
+            if self.dialogue_started and not self.show_dialogue:
+                # Transition to the next dialogue phase
+                self.current_dialogue_phase = 1
+                self.dialogue_started = False  # Reset for the next dialogue
+
+        elif self.current_dialogue_phase == 1:
+            if not self.dialogue_started:
+                # Start the second dialogue
+                self.start_dialogue([
+                    ("...", (255, 255, 255)),
+                    ("When I look outside I can't recognize anything, it is so blurry", (255, 255, 255)),
+                    ("That is because you are not allowed to see the way,", (255, 182, 193)),
+                    ("just trust the process.", (255, 182, 193)),
+                    ("I know you are that type that wants to control her fate.", (255, 182, 193)),
+                    ("And at some degree this is a good thing.", (255, 182, 193)),
+                    ("But you took it too far.", (255, 182, 193)),
+                    ("You just should have wait a bit, like 3 freaking days...", (255, 182, 193)),
+                    ("but you were sooo impatient.", (255, 182, 193)),
+                    ("This is not something I usually do.", (255, 182, 193)),
+                    ("But in your case I decided to change my mind.", (255, 182, 193)),
+                    ("I will bring you back, where you decided to finish everything.", (255, 182, 193)),
+                    ("And be patient from now on, okay?", (255, 182, 193)),
+                    ("...", (255, 255, 255)),
+                    ("Wait... Did I...?", (255, 255, 255)),
+                    ("Yes. But don't ask me more about it, I told you enough.", (255, 182, 193)),
+                    ("There are just things that you just should not know yet.", (255, 182, 193)),
+                    ("...", (255, 255, 255)),
+                    ("If you would not help me, would I go to hell?", (255, 255, 255)),
+                    ("You mean the biblical hell with the nine circles?", (255, 182, 193)),
+                    ("No, there is no such thing.", (255, 182, 193)),
+                ])
+                self.dialogue_started = True
+
+            if self.dialogue_started and not self.show_dialogue:
+                self.current_dialogue_phase = 2
+
+        if self.current_dialogue_phase >= 1:
+            # Display animation frames continuously
+            screen.blit(self.frames[self.current_frame], self.position)

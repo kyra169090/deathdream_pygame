@@ -41,7 +41,7 @@ class Node:
         self.show_dialogue = False
 
     def update(self, delta_time):
-        pass  # Default behavior: do nothing
+        pass
 
     def render(self, screen, inventory):
         screen.blit(self.background_image, (0, 0))
@@ -84,5 +84,5 @@ class Node:
         """Handle dialogue clicking to progress or end."""
         if self.dialogue_queue:
             self.dialogue_queue.pop(0)  # Remove the current dialogue
-            if not self.dialogue_queue:  # No more dialogues
+            if not self.dialogue_queue:  # If there ar no more dialogues
                 self.show_dialogue = False
