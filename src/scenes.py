@@ -1004,13 +1004,29 @@ class BusDriver(Node):
         self.glitching = False
         self.glitch_frames = self.create_glitch_effect()
         self.glitch_sound = pygame.mixer.Sound('../assets/sounds/glitch_sound.mp3')
+        self.fade_alpha = 0  # Used for fade-out effect
+        self.fading_out = False
+        self.text_y = 1080  # Start position for scrolling text
+        self.fade_complete = False  # Track when fade is finished
 
     def load_frames(self, folder):
         """Load all image frames from the folder."""
-        for filename in sorted(os.listdir(folder)):
-            path = os.path.join(folder, filename)
-            image = pygame.image.load(path).convert_alpha()  # Load with transparency
-            self.frames.append(image)
+        if not os.path.exists(folder):
+            print(f"Error: Folder '{folder}' does not exist.")
+            return
+
+        try:
+            for filename in sorted(os.listdir(folder)):
+                path = os.path.join(folder, filename)
+                if filename.lower().endswith(('.png', '.jpg', '.jpeg')):  # Ensure valid formats
+                    image = pygame.image.load(path).convert_alpha()
+                    self.frames.append(image)
+                else:
+                    print(f"Skipped non-image file: {filename}")
+            if not self.frames:
+                print("Warning: No valid image frames found!")
+        except Exception as e:
+            print(f"Error loading frames: {e}")
 
     def create_glitch_effect(self):
         """Generate distorted glitch frames by shifting and inverting colors."""
@@ -1045,6 +1061,11 @@ class BusDriver(Node):
                 return
             else:
                 self.glitching = False  # Stop glitching after duration
+
+        if self.fading_out:
+            self.handle_fade_out(screen)
+            return
+
         super().render(screen, inventory)
         self.check_dialogue(screen)
 
@@ -1106,8 +1127,128 @@ class BusDriver(Node):
                 self.dialogue_started = True
 
             if self.dialogue_started and not self.show_dialogue:
-                self.current_dialogue_phase = 2
+                self.start_fade_out()
 
         if self.current_dialogue_phase >= 1:
             # Display animation frames continuously
             screen.blit(self.frames[self.current_frame], self.position)
+
+    def start_fade_out(self):
+        """Begin fade out and transition to scrolling text."""
+        self.fading_out = True
+        self.fade_alpha = 0
+
+    def handle_fade_out(self, screen):
+        """Handle the fade to black effect before displaying the scrolling text."""
+        if self.fade_alpha < 255:
+            self.fade_alpha += 5  # Increase fade level gradually
+        else:
+            self.fade_complete = True  # Fade-out is complete
+
+        fade_surface = pygame.Surface(screen.get_size())
+        fade_surface.fill((0, 0, 0))
+        fade_surface.set_alpha(self.fade_alpha)
+        screen.blit(fade_surface, (0, 0))
+
+        if self.fade_complete:
+            self.display_scrolling_text(screen)
+
+    def display_scrolling_text(self, screen):
+        """Display the creepy poem scrolling upwards."""
+        font = pygame.font.Font(None, 50)
+        text_color = (255, 255, 255)
+        text_lines = [
+                "There is a monster in the wardrobe.",
+                "It waits for me, it breathes when I breathe.",
+                "It whispers under its breath,",
+                "but when I listen, it holds its tongue.",
+                "",
+                "I told Mom and Dad, but they called me crazy.",
+                "They yelled, they slammed, they raged.",
+                '"Stop making things up."',
+                '"Why can\'t you be like the other kids?"',
+                "",
+                "I can't stand the darkness in my room.",
+                "The way it bends and stretches,",
+                "How it dances in corners,",
+                "How it watches me sleep.",
+                "",
+                "Shadows play games with my fear.",
+                "I think they like it.",
+                "They laugh when I shiver.",
+                "They hiss when I hide.",
+                "",
+                "But the monster in the wardrobe is worse.",
+                "I can't see it, but I know it's there.",
+                "I feel it staring, waiting,",
+                "Smiling with too many teeth.",
+                "",
+                "My skin itches all night long.",
+                "I want to cough, but I hold it in.",
+                "I am not allowed to wake them up.",
+                "I am not allowed to be afraid.",
+                "",
+                "I can’t decide which nightmare is worse:",
+                "What I see when I close my eyes,",
+                "or what I see when I don’t.",
+                "",
+                "But today is special!",
+                "Today, I have birthday.",
+                "Today, I get a cake.",
+                "",
+                "It looks delicious.",
+                "It tastes like dust.",
+                "You can all have it.",
+                "You like it more than me anyway.",
+                "",
+                "I hate you all.",
+                "I hope you choke on your food.",
+                "I hope you gasp and turn blue and finally disappear.",
+                "I hope I can finally be free.",
+                "",
+                "I go to my room.",
+                "I rip all my plushies apart.",
+                "They would not protect me anyway.",
+                "They never did.",
+                "",
+                "I scream into my pillow,",
+                "But not too loudly.",
+                "Dad might hear.",
+                "Dad can’t know.",
+                "",
+                "I want to play with fire.",
+                "I want to watch something melt.",
+                "I want to watch something turn to ash.",
+                "",
+                "And then...",
+                "There is a glitch.",
+                "I am a grown up now.",
+                "",
+                "I open the wardrobe.",
+                "I step inside.",
+                "",
+                "And now I know.",
+                "Now, it all makes sense.",
+                "",
+                "I was the monster in the wardrobe.",
+                "And I’ve been waiting for me this whole time.",
+                "", "", "", "", "", "", "", "", "", "", "", "", "",
+                "Music by: Father2006",
+                "Sound Effects: https://pixabay.com/",
+                "Game by: kyra169090 (Diána P.)",
+                "",
+                "Thanks for playing!",
+                "",
+                "",
+                "Exiting...",
+        ]
+
+        for i, line in enumerate(text_lines):
+            text_surface = font.render(line, True, text_color)
+            screen.blit(text_surface, (400, self.text_y + (i * 60)))
+
+        self.text_y -= 0.6  # Scroll effect
+        if self.text_y < -len(text_lines) * 60:
+            pygame.quit()
+            exit()
+

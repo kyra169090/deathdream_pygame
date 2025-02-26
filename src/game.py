@@ -21,10 +21,10 @@ class Game:
         except Exception as e:
             print(f"Music loading error: {e}")
 
-        from scene_manager import city_part_5_1_1   # Normally: start_scene, when testing: city_part_5_1_1
+        from scene_manager import city_part_5_2_5  # Normally: start_scene, when testing: city_part_5_1_1
 
         # Start with location1
-        self.current_scene = city_part_5_1_1   # Normally: start_scene, when testing: city_part_5_1_1
+        self.current_scene = city_part_5_2_5  # Normally: start_scene, when testing: city_part_5_1_1
         self.inventory = Inventory()
         self.clock = pygame.time.Clock()
 
