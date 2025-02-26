@@ -999,6 +999,11 @@ class BusDriver(Node):
         self.position = position
         self.frame_timer = 0  # To control animation speed
         self.frame_delay = 150  # Delay in milliseconds between frames
+        self.glitch_duration = 1000  # Duration of glitch effect in milliseconds
+        self.glitch_start_time = None
+        self.glitching = False
+        self.glitch_frames = self.create_glitch_effect()
+        self.glitch_sound = pygame.mixer.Sound('../assets/sounds/glitch_sound.mp3')
 
     def load_frames(self, folder):
         """Load all image frames from the folder."""
@@ -1006,6 +1011,23 @@ class BusDriver(Node):
             path = os.path.join(folder, filename)
             image = pygame.image.load(path).convert_alpha()  # Load with transparency
             self.frames.append(image)
+
+    def create_glitch_effect(self):
+        """Generate distorted glitch frames by shifting and inverting colors."""
+        glitch_frames = []
+        for i in range(5):  # Generate multiple frames for variation
+            glitched = self.background_image.copy()
+            arr = pygame.surfarray.pixels3d(glitched)
+            arr[:, :, (i % 3)] = 255 - arr[:, :, (i % 3)]  # Invert colors in one channel
+            del arr
+            glitch_frames.append(glitched)
+        return glitch_frames
+
+    def start_glitch(self):
+        """Trigger the glitch effect."""
+        self.glitch_start_time = pygame.time.get_ticks()
+        self.glitching = True
+        self.glitch_sound.play()
 
     def update(self, delta_time):
         """Update the frame based on time."""
@@ -1015,6 +1037,14 @@ class BusDriver(Node):
             self.current_frame = (self.current_frame + 1) % len(self.frames)
 
     def render(self, screen, inventory):
+        current_time = pygame.time.get_ticks()
+
+        if self.glitching and self.glitch_start_time:
+            if current_time - self.glitch_start_time < self.glitch_duration:
+                screen.blit(self.glitch_frames[(current_time // 100) % len(self.glitch_frames)], (0, 0))
+                return
+            else:
+                self.glitching = False  # Stop glitching after duration
         super().render(screen, inventory)
         self.check_dialogue(screen)
 
@@ -1030,6 +1060,7 @@ class BusDriver(Node):
                     ("I know how you feel.", (255, 182, 193)),
                     ("I will take you to where you belong, because this is definitely not it.", (255, 182, 193)),
                     ("Let's go then.", (255, 182, 193)),
+                    ("...", (255, 255, 255)),
 
                 ])
                 self.dialogue_started = True
@@ -1041,19 +1072,10 @@ class BusDriver(Node):
 
         elif self.current_dialogue_phase == 1:
             if not self.dialogue_started:
+                self.start_glitch()
                 # Start the second dialogue
                 self.start_dialogue([
-                    ("...", (255, 255, 255)),
-                    ("When I look outside, I can't recognize anything. It's all... blurry.", (255, 255, 255)),
-                    ("Well, yeah. You’re not supposed to see the way.", (255, 182, 193)),
-                    ("Would ruin the surprise.", (255, 182, 193)),
-                    ("...", (255, 255, 255)),
-                    ("Surprise?", (255, 255, 255)),
-                    ("Trust the process.", (255, 182, 193)),
-                    ("You’re the type who likes control, right?", (255, 182, 193)),
-                    ("That’s cute.", (255, 182, 193)),
-                    ("But you lost control a while ago.", (255, 182, 193)),
-                    ("What the hell was that?", (255, 255, 255)),
+                    ("What the hell was that???!!!", (255, 255, 255)),
                     ("Ignore it.", (255, 182, 193)),
                     ("You’re safe with me.", (255, 182, 193)),
                     ("This happens sometimes. Some of you notice it. Some of you don’t.", (255, 182, 193)),
@@ -1065,6 +1087,16 @@ class BusDriver(Node):
                     ("I don’t know anymore.", (255, 255, 255)),
                     ("Are you even real?", (255, 255, 255)),
                     ("Are you?", (255, 182, 193)),
+                    ("...", (255, 255, 255)),
+                    ("When I look outside, I can't recognize anything. It's all... blurry.", (255, 255, 255)),
+                    ("Well, yeah. You’re not supposed to see the way.", (255, 182, 193)),
+                    ("Would ruin the surprise.", (255, 182, 193)),
+                    ("...", (255, 255, 255)),
+                    ("Surprise?", (255, 255, 255)),
+                    ("Trust the process.", (255, 182, 193)),
+                    ("You’re the type who likes control, right?", (255, 182, 193)),
+                    ("That’s cute.", (255, 182, 193)),
+                    ("But you lost control a while ago.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
                     ("Either way, it’s time.", (255, 182, 193)),
                     ("I have to drop you off now.", (255, 182, 193)),
