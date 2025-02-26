@@ -665,7 +665,7 @@ class CityPart5Street1(Node):
         if not self.dialogue_started and self.fade_alpha <= 0:
             self.start_dialogue([
                 "Have I escaped?",
-                "I have not escaped at all... It's still that dream, just in a different place. What now?"
+                "I have not escaped at all... It's still that dream, only a different place. What now?"
             ])
             self.dialogue_started = True
 
@@ -714,6 +714,7 @@ class CityPart5Apartments(Node):
         ]
         self.next_scene = next_scene
         self.new_box = None
+        self.dialogue_started = False
 
     def use_ladder(self):
         # Change the background image to show the lit room
@@ -729,6 +730,15 @@ class CityPart5Apartments(Node):
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
+        self.check_dialogue(screen)
+
+    def check_dialogue(self, screen):
+        if not self.dialogue_started:
+            self.start_dialogue([
+                "It looks bizarre...",
+                "Maybe I can go upstairs somehow?"
+            ])
+            self.dialogue_started = True
 
 class CityPart5Apartments2(Node):
     def __init__(self, background_image):
@@ -885,27 +895,27 @@ class CityPart5BusStation(Node):
             self.start_dialogue([
                 "...",
                 "Okay, let's wait...",
-                "Maybe some bus will come? ",
-                "Not that I saw any living-moving thing so far...",
+                "Maybe a bus will come? ",
+                "Not that I've seen any living, moving thing so far...",
                 "...",
-                "There is a clock, but it is not moving also I guess...",
+                "There is a clock, but it is not moving either I guess...",
                 "...",
                 "Now that I am thinking...",
                 "This feels like a dream, but I don't remember what I have in the real life, ...",
                 "it's so strange.",
-                "What do I work?",
+                "What do I do for work?",
                 "Where do I live?",
                 "Do I have a soulmate or friends?",
                 "I can't remember.",
                 "...",
                 "But I recognized our old house and my old apartment and mobile phone,",
-                "that means something...",
-                "Too bad that I can't link anything good to them.",
+                "that must mean something...",
+                "Too bad I can't associate anything good with them.",
                 "And I just hope I can wake up somehow and escape this.",
                 "Because this is unbearable.",
                 "I am so scared, it is unbearable.",
-                "Everything is just scaring me here, and there is no one to run to or talk to.",
-                "I have this bus ticket, but where do I go, even if some bus comes?",
+                "Everything here terrifies me, and there's no one to run to or talk to.",
+                "I have this bus ticket, but where would I even go if a bus came?",
                 "I don't even know where to get off...",
                 "...",
                 "A bus has arrived!"
@@ -949,9 +959,11 @@ class CityPart5BusInside(Node):
         self.ticket_used = False
         self.dialogue_started = False
         self.dialogue_finished = False
+        self.beep_sound = pygame.mixer.Sound('../assets/sounds/beep_for_ticket.mp3')
 
     def use_busticket(self):
         self.ticket_used = True
+        self.beep_sound.play()
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -1011,12 +1023,12 @@ class BusDriver(Node):
             if not self.dialogue_started:
                 self.start_dialogue([
                     ("...", (255, 255, 255)),
-                    ("Hi! You are the first living creature I have seen here so far...", (255, 255, 255)),
+                    ("Hi! You are the first living thing I have seen here so far...", (255, 255, 255)),
                     ("Can I disturb you while you are driving?", (255, 255, 255)),
                     ("I am so lonely and lost here...", (255, 255, 255)),
                     ("Sure!", (255, 182, 193)),
-                    ("I know how you are feeling.", (255, 182, 193)),
-                    ("I will take you where you belong, because this is definitely not it.", (255, 182, 193)),
+                    ("I know how you feel.", (255, 182, 193)),
+                    ("I will take you to where you belong, because this is definitely not it.", (255, 182, 193)),
                     ("Let's go then.", (255, 182, 193)),
 
                 ])
@@ -1032,56 +1044,32 @@ class BusDriver(Node):
                 # Start the second dialogue
                 self.start_dialogue([
                     ("...", (255, 255, 255)),
-                    ("When I look outside I can't recognize anything, it is so blurry", (255, 255, 255)),
-                    ("That is because you are not allowed to see the way,", (255, 182, 193)),
-                    ("just trust the process.", (255, 182, 193)),
-                    ("I know you are that type that wants to control her fate.", (255, 182, 193)),
-                    ("And at some degree this is a good thing.", (255, 182, 193)),
-                    ("But you took it too far.", (255, 182, 193)),
-                    ("You just should have wait a bit, like 3 freaking days...", (255, 182, 193)),
-                    ("but you were sooo impatient.", (255, 182, 193)),
-                    ("This is not something I usually do.", (255, 182, 193)),
-                    ("But in your case I decided to change my mind.", (255, 182, 193)),
-                    ("I will bring you back, where you decided to finish everything.", (255, 182, 193)),
-                    ("And be patient from now on, okay?", (255, 182, 193)),
+                    ("When I look outside, I can't recognize anything. It's all... blurry.", (255, 255, 255)),
+                    ("Well, yeah. You’re not supposed to see the way.", (255, 182, 193)),
+                    ("Would ruin the surprise.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
-                    ("Wait... Did I...?", (255, 255, 255)),
-                    ("Yes. But don't ask me more about it, I told you enough.", (255, 182, 193)),
-                    ("There are just things that you just should not know yet.", (255, 182, 193)),
+                    ("Surprise?", (255, 255, 255)),
+                    ("Trust the process.", (255, 182, 193)),
+                    ("You’re the type who likes control, right?", (255, 182, 193)),
+                    ("That’s cute.", (255, 182, 193)),
+                    ("But you lost control a while ago.", (255, 182, 193)),
+                    ("What the hell was that?", (255, 255, 255)),
+                    ("Ignore it.", (255, 182, 193)),
+                    ("You’re safe with me.", (255, 182, 193)),
+                    ("This happens sometimes. Some of you notice it. Some of you don’t.", (255, 182, 193)),
+                    ("You're a tricky one.", (255, 182, 193)),
+                    ("Who are you?", (255, 255, 255)),
+                    ("Just a driver.", (255, 182, 193)),
+                    ("And you?", (255, 182, 193)),
                     ("...", (255, 255, 255)),
-                    ("If you would not help me, would I go to hell?", (255, 255, 255)),
-                    ("You mean the biblical hell with the nine circles?", (255, 182, 193)),
-                    ("No, there is no such thing.", (255, 182, 193)),
-                    ("It was just the imagination of people.", (255, 182, 193)),
-                    ("Actually, they weren't so far from the truth, though.", (255, 182, 193)),
-                    ("You know, if you check out of life when you're at your lowest,", (255, 182, 193)),
-                    ("it will stay that way, ", (255, 182, 193)),
-                    ("and you'll be stuck with your bad memories.", (255, 182, 193)),
-                    ("Like, yes, a never-ending nightmare.", (255, 182, 193)),
-                    ("Well, you could call that 'HELL', ", (255, 182, 193)),
-                    ("but it's different from what most people understand as hell.", (255, 182, 193)),
+                    ("I don’t know anymore.", (255, 255, 255)),
+                    ("Are you even real?", (255, 255, 255)),
+                    ("Are you?", (255, 182, 193)),
                     ("...", (255, 255, 255)),
-                    ("So if I 'checked out of life' while I was happy,", (255, 255, 255)),
-                    ("would I be stuck in a good, warm-feeling dream?", (255, 255, 255)),
-                    ("Exactly.", (255, 182, 193)),
-                    ("But isn't that unfair?", (255, 255, 255)),
-                    ("It is unfair.", (255, 182, 193)),
-                    ("At least I, and other entities similar to me think it is unfair.", (255, 182, 193)),
-                    ("But it is hard to change it.", (255, 182, 193)),
-                    ("We are in a war actually to change it.", (255, 182, 193)),
-                    ("So you are not alone in here?", (255, 255, 255)),
-                    ("No. Many entities like me exist.", (255, 182, 193)),
-                    ("But we are not a homogeneous group, just like you humans.", (255, 182, 193)),
-                    ("You also have very different opinions in life.", (255, 182, 193)),
-                    ("The difference between you and us entities is", (255, 182, 193)),
-                    ("that you can't change the rules after dying.", (255, 182, 193)),
-                    ("But we can.", (255, 182, 193)),
-                    ("I mean... at least I and some entities like me know how to.", (255, 182, 193)),
-                    ("We are working on it. We need time from you humans.", (255, 182, 193)),
-                    ("That sounds very hopeful.", (255, 255, 255)),
-                    ("It is. So be patient, and wait for us, alright?", (255, 182, 193)),
-                    ("Okay.", (255, 255, 255)),
-                    ("...", (255, 255, 255)),
+                    ("Either way, it’s time.", (255, 182, 193)),
+                    ("I have to drop you off now.", (255, 182, 193)),
+                    ("Close your eyes. This part is... weird.", (255, 182, 193)),
+                    ("And from now on, don't be a scared little bitch", (255, 182, 193)),
                 ])
                 self.dialogue_started = True
 

@@ -36,7 +36,7 @@ class Node:
         self.slots = []
         pygame.font.init()
         self.font = pygame.font.Font(None, 50)
-        self.text_rect = pygame.Rect(50, 10, 1400, 70)
+        self.text_rect = pygame.Rect(50, 900, 1400, 70)
         self.dialogue_queue = []
         self.show_dialogue = False
 
