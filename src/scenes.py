@@ -30,7 +30,7 @@ class Start(Node):
         if not self.dialogue_started:
             self.start_dialogue([
                 "Where am I?",
-                "And the strangest thing, why am I here right now?"
+                "And the strangest thing is... why am I here?"
             ])
             self.dialogue_started = True
 
@@ -971,7 +971,6 @@ class CityPart5BusInside(Node):
         # Handle dialogue progression
         if self.ticket_used and not self.dialogue_started:
             self.start_dialogue([
-                "...",
                 "I can talk with the driver, maybe...",
                 "He doesn't seem to be that creepy."
             ])
@@ -1076,7 +1075,7 @@ class BusDriver(Node):
                     ("...", (255, 255, 255)),
                     ("Hi! You are the first living thing I have seen here so far...", (255, 255, 255)),
                     ("Can I disturb you while you are driving?", (255, 255, 255)),
-                    ("I am so lonely and lost here...", (255, 255, 255)),
+                    ("I am so lonely and lost here... and scared...", (255, 255, 255)),
                     ("Sure!", (255, 182, 193)),
                     ("I know how you feel.", (255, 182, 193)),
                     ("I will take you to where you belong, because this is definitely not it.", (255, 182, 193)),
@@ -1114,13 +1113,22 @@ class BusDriver(Node):
                     ("Would ruin the surprise.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
                     ("Surprise?", (255, 255, 255)),
-                    ("Trust the process.", (255, 182, 193)),
                     ("You’re the type who likes control, right?", (255, 182, 193)),
                     ("That’s cute.", (255, 182, 193)),
                     ("But you lost control a while ago.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
+                    ("Which is not a surprise considering your upbringing...", (255, 182, 193)),
+                    ("And everything that happened to you even after you left them.", (255, 182, 193)),
+                    ("The fear, the anger... it devoured you.", (255, 182, 193)),
+                    ("Listen, girl...", (255, 182, 193)),
+                    ("Your intense fear only keeps you stuck.", (255, 182, 193)),
+                    ("It triggers avoidance, self-doubt, and can make you feel powerless.", (255, 182, 193)),
+                    ("However, anger, when channeled properly, can be empowering.", (255, 182, 193)),
+                    ("It pushes you to set boundaries and take action.", (255, 182, 193)),
+                    ("Reclaim your autonomy!", (255, 182, 193)),
                     ("Either way, it’s time.", (255, 182, 193)),
-                    ("I have to drop you off now.", (255, 182, 193)),
+                    ("Why do I feel like I know you?", (255, 255, 255)),
+                    ("Sorry, girl, I have to drop you off now.", (255, 182, 193)),
                     ("Close your eyes. This part is... weird.", (255, 182, 193)),
                     ("And from now on, don't be a scared little bitch", (255, 182, 193)),
                 ])
@@ -1198,7 +1206,7 @@ class BusDriver(Node):
                 "or what I see when I don’t.",
                 "",
                 "But today is special!",
-                "Today, I have birthday.",
+                "Today, it's my birthday.",
                 "Today, I get a cake.",
                 "",
                 "It looks delicious.",
