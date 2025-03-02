@@ -707,7 +707,7 @@ class CityPart5Apartments(Node):
         super().__init__(background_image, changed_background_image)
         self.ladder_used = False
         self.slots = [
-            Slot(x=1000, y=200, width=300, height=400, required_item="Ladder", action=self.use_ladder)
+            Slot(x=900, y=200, width=300, height=400, required_item="Ladder", action=self.use_ladder)
         ]
         self.boxes = [
             Box(x=0, y=910, width=1500, height=114, next_scene=None)
