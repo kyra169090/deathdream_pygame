@@ -11,13 +11,18 @@ class GameObject:
         self.interactable = interactable
         self.inventory_image = pygame.transform.scale_by(self.image, 0.4)
 
-    def render(self, screen, x=None, y=None):
+    def render(self, screen, x=None, y=None, scale_factor=1):
         if x is not None and y is not None:
-            screen.blit(self.inventory_image, (x, y))
+            # Dynamically scale based on the scale factor
+            scaled_width = int(self.width * 0.4 * scale_factor)
+            scaled_height = int(self.height * 0.4 * scale_factor)
+            scaled_image = pygame.transform.scale(self.image, (scaled_width, scaled_height))
+
+            screen.blit(scaled_image, (x, y))
             self.rect.x = x
             self.rect.y = y
-            self.rect.width = self.width/2
-            self.rect.height = self.height/2
+            self.rect.width = scaled_width
+            self.rect.height = scaled_height
         else:
             screen.blit(self.image, self.rect.topleft)
 

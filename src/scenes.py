@@ -1052,6 +1052,12 @@ class BusDriver(Node):
             self.current_frame = (self.current_frame + 1) % len(self.frames)
 
     def render(self, screen, inventory):
+
+        for item in inventory.items:
+            if item.name == "Crowbar":
+                inventory.remove_item(item)
+                break
+
         current_time = pygame.time.get_ticks()
 
         if self.glitching and self.glitch_start_time:
@@ -1112,13 +1118,13 @@ class BusDriver(Node):
                     ("Well, yeah. You’re not supposed to see the way.", (255, 182, 193)),
                     ("Would ruin the surprise.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
-                    ("Surprise?", (255, 255, 255)),
-                    ("You’re the type who likes control, right?", (255, 182, 193)),
+                    ("Surprise?!", (255, 255, 255)),
+                    ("You’re the type who would like to have control, right?", (255, 182, 193)),
                     ("That’s cute.", (255, 182, 193)),
-                    ("But you lost control a while ago.", (255, 182, 193)),
+                    ("You lost control a long time ago.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
-                    ("Which is not a surprise considering your upbringing...", (255, 182, 193)),
-                    ("And everything that happened to you even after you left them.", (255, 182, 193)),
+                    ("Which was inevitable, considering your upbringing...", (255, 182, 193)),
+                    ("And everything that happened to you even after you left that house.", (255, 182, 193)),
                     ("The fear, the anger... it devoured you.", (255, 182, 193)),
                     ("Listen, girl...", (255, 182, 193)),
                     ("Your intense fear only keeps you stuck.", (255, 182, 193)),
