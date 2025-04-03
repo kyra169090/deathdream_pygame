@@ -1,4 +1,5 @@
 import pygame
+import sys
 from objects import GameObject
 from slots_n_boxes import Slot, Box, Node
 import os
@@ -1264,5 +1265,5 @@ class BusDriver(Node):
         self.text_y -= 0.6  # Scroll effect
         if self.text_y < -len(text_lines) * 60:
             pygame.quit()
-            exit()
+            sys.exit()
 
