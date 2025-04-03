@@ -7,10 +7,17 @@ class Game:
     def __init__(self):
         pygame.init()
 
-        # Screen setup
+        # Internal fixed resolution (virtual screen)
         self.WIDTH = 1500
         self.HEIGHT = 1024
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+
+        # Real screen setup
+        self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.real_width, self.real_height = self.window.get_size()
+
+        # Virtual screen to render the game
+        self.virtual_screen = pygame.Surface((self.WIDTH, self.HEIGHT))
+
         pygame.display.set_caption('Deathdream')
 
         # Music
@@ -21,10 +28,9 @@ class Game:
         except Exception as e:
             print(f"Music loading error: {e}")
 
-        from scene_manager import start_scene  # Normally: start_scene, when testing: city_part_5_1_1
+        from scene_manager import start_scene
 
-        # Start with location1
-        self.current_scene = start_scene  # Normally: start_scene, when testing: city_part_5_1_1
+        self.current_scene = start_scene
         self.inventory = Inventory()
         self.clock = pygame.time.Clock()
 
@@ -32,75 +38,79 @@ class Game:
         running = True
         selected_item = None
         hand_cursor = pygame.image.load('../assets/images/other/pointer.png')
-        
+
         while running:
             delta_time = self.clock.tick(60)
             if hasattr(self.current_scene, 'update'):
                 self.current_scene.update(delta_time)
-            moving_mouse_pos = pygame.mouse.get_pos()
-            # print(moving_mouse_pos)
+
+            # Adjust mouse pos to virtual resolution
+            raw_mouse_pos = pygame.mouse.get_pos()
+            mouse_pos = (
+                raw_mouse_pos[0] * self.WIDTH / self.real_width,
+                raw_mouse_pos[1] * self.HEIGHT / self.real_height
+            )
             hover = False
-            
-            # The Pygame event loop (for a point&click mousedown is enough)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = event.pos
+                    click_pos = (
+                        event.pos[0] * self.WIDTH / self.real_width,
+                        event.pos[1] * self.HEIGHT / self.real_height
+                    )
 
                     if self.current_scene.show_dialogue:
-                        if self.current_scene.text_rect.collidepoint(mouse_pos):
+                        if self.current_scene.text_rect.collidepoint(click_pos):
                             self.current_scene.click_dialogue()
                         continue
 
                     if not self.current_scene.show_dialogue:
-                    # Handle item selection from the inventory
-                        if event.button == 1:  # Left-click
+                        if event.button == 1:
                             for item in self.inventory.items:
-                                if item.rect.collidepoint(mouse_pos):
+                                if item.rect.collidepoint(click_pos):
                                     self.inventory.select_item(item)
                                     selected_item = item
                                     break
 
-                        # Check for interactions with objects that can be picked up
                         for obj in self.current_scene.objects:
-                            if obj.rect.collidepoint(mouse_pos):
+                            if obj.rect.collidepoint(click_pos):
                                 obj.interact(self.inventory)
                                 break
 
-                        # Check for interactions with boxes
                         for box in self.current_scene.boxes:
-                            if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(mouse_pos):
+                            if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(click_pos):
                                 self.current_scene = box.next_scene
                                 break
 
-                        # Handle interaction with slots (you can use objects on them)
                         for slot in self.current_scene.slots:
-                            if slot.rect.collidepoint(mouse_pos) and selected_item:
+                            if slot.rect.collidepoint(click_pos) and selected_item:
                                 if slot.try_use_item(selected_item, self.inventory):
-                                    self.inventory.selected_item = None  # Deselecting the item after it is used
+                                    self.inventory.selected_item = None
                                     break
 
-            # If pointer should be shown or not
             for box in self.current_scene.boxes:
-                if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(moving_mouse_pos):
+                if pygame.Rect(box.x, box.y, box.width, box.height).collidepoint(mouse_pos):
                     hover = True
                     break
 
-            # Check if the current scene has changed
-            new_scene = self.current_scene.render(self.screen, self.inventory)
+            new_scene = self.current_scene.render(self.virtual_screen, self.inventory)
             if new_scene is not None:
                 self.current_scene = new_scene
 
             if hover:
                 pygame.mouse.set_visible(False)
-                # Draw the custom cursor image at the mouse position after everything else
-                self.screen.blit(hand_cursor, (moving_mouse_pos[0] - hand_cursor.get_width() // 2, 
-                                               moving_mouse_pos[1] - hand_cursor.get_height() // 2))
+                self.virtual_screen.blit(hand_cursor, (mouse_pos[0] - hand_cursor.get_width() // 2,
+                                                       mouse_pos[1] - hand_cursor.get_height() // 2))
             else:
-                # Show the default system cursor
                 pygame.mouse.set_visible(True)
 
+            # Scale up virtual screen to real screen
+            scaled_surface = pygame.transform.scale(self.virtual_screen, (self.real_width, self.real_height))
+            self.window.blit(scaled_surface, (0, 0))
             pygame.display.flip()
 
         pygame.quit()
