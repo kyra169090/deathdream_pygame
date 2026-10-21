@@ -83,20 +83,22 @@ class CityPart1Pantry(Node):
         self.objects = [
             GameObject(name="Crowbar", image_path="../assets/images/scenes/location1/crowbar.png", x=900, y=780, width=200, height=200, interactable=False)
         ]
-        self.lightbulb_sound = pygame.mixer.Sound('../assets/sounds/lightbulb_sound.mp3')
+        self.lightbulb_sound = pygame.mixer.Sound('../assets/sounds/lightbulb_sound.ogg')
 
     def use_lightbulb(self):
         # Change the background image to show the lit room
         if not self.lightbulb_used and self.changed_background_image:
             self.lightbulb_sound.play()
-            pygame.time.delay(2000)
-            self.background_image = self.changed_background_image
-            self.lightbulb_used = True
+            self.wait(2000, self.light_up)
 
-            # Make the crowbar interactable now
-            for obj in self.objects:
-                if obj.name == "Crowbar":
-                    obj.interactable = True
+    def light_up(self):
+        self.background_image = self.changed_background_image
+        self.lightbulb_used = True
+
+        # Make the crowbar interactable now
+        for obj in self.objects:
+            if obj.name == "Crowbar":
+                obj.interactable = True
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -170,15 +172,17 @@ class CityPart3Door(Node):
             Box(x=300, y=960, width=1180, height=64, next_scene=None)
         ]
         self.new_box = None
-        self.door_crowbar_sound = pygame.mixer.Sound('../assets/sounds/door_with_crowbar.mp3')
+        self.door_crowbar_sound = pygame.mixer.Sound('../assets/sounds/door_with_crowbar.ogg')
 
     def use_crowbar(self):
         # you can enter house after using the crowbar
         if not self.isOpen:
             self.door_crowbar_sound.play()
-            pygame.time.delay(1000)
-            self.isOpen = True
-            self.add_new_box()
+            self.wait(1000, self.open_door)
+
+    def open_door(self):
+        self.isOpen = True
+        self.add_new_box()
 
 
     def add_new_box(self):
@@ -218,8 +222,8 @@ class CityPart3Room(Node):
         self.boxes = [
             Box(x=0, y=950, width=850, height=70, next_scene=None)
         ]
-        self.breathing_sound = pygame.mixer.Sound('../assets/sounds/citypart3room/breathing_sound.mp3')
-        self.break_sound = pygame.mixer.Sound('../assets/sounds/break_sound.mp3')
+        self.breathing_sound = pygame.mixer.Sound('../assets/sounds/citypart3room/breathing_sound.ogg')
+        self.break_sound = pygame.mixer.Sound('../assets/sounds/break_sound.ogg')
 
         # Flag to check if breathing sound has been played already
         self.breathing_sound_played = False
@@ -257,7 +261,7 @@ class CityPart3RoomLetter(Node):
             Box(x=0, y=0, width=300, height=1024, next_scene=None),
             Box(x=1300, y=0, width=200, height=1024, next_scene=None)
         ]
-        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.ogg')
         self.paper_sound_played = False
 
     def render(self, screen, inventory):
@@ -281,7 +285,7 @@ class CityPart3CorridorWardrobe(Node):
             Box(x=0, y=920, width=1500, height=104, next_scene=None)
         ]
         self.new_box = None
-        self.unlocking_sound = pygame.mixer.Sound('../assets/sounds/unlocking.mp3')
+        self.unlocking_sound = pygame.mixer.Sound('../assets/sounds/unlocking.ogg')
         self.game_state = game_state
         self.dialogue_started = False
 
@@ -289,10 +293,12 @@ class CityPart3CorridorWardrobe(Node):
         # Change the background image to show the lit room
         if not self.key_used and self.changed_background_image:
             self.unlocking_sound.play()
-            pygame.time.delay(1000)
-            self.background_image = self.changed_background_image
-            self.add_new_boxes()
-            self.key_used = True
+            self.wait(1000, self.unlock)
+
+    def unlock(self):
+        self.background_image = self.changed_background_image
+        self.add_new_boxes()
+        self.key_used = True
 
     def add_new_boxes(self):
         # Add the new box and set its next scene
@@ -322,7 +328,7 @@ class CityPart3Photo1(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.ogg')
         self.paper_sound_played = False
         self.game_state = game_state
 
@@ -340,7 +346,7 @@ class CityPart3Photo2(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.ogg')
         self.paper_sound_played = False
         self.game_state = game_state
 
@@ -358,7 +364,7 @@ class CityPart3CorridorWardrobeLetter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.ogg')
         self.paper_sound_played = False
         self.game_state = game_state
 
@@ -492,20 +498,21 @@ class CityPart4FamilyHouseBasement2(Node):
             Box(x=0, y=930, width=1500, height=94, next_scene=None)
         ]
         self.new_box = None
-        self.digging_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/digging.mp3')
+        self.digging_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/digging.ogg')
 
     def use_shovel(self):
         # Change the background image to show the lit room
         if not self.shovel_used and self.changed_background_image:
             self.digging_sound.play()
-            pygame.time.delay(4000)
-            self.background_image = self.changed_background_image
-            self.add_new_box()
-            self.shovel_used = True
+            self.wait(4000, self.finish_digging)
+
+    def finish_digging(self):
+        self.background_image = self.changed_background_image
+        self.shovel_used = True
+        self.wait(2500, self.add_new_box)
 
     def add_new_box(self):
         # Add the new box and set its next scene
-        pygame.time.delay(2500)
         self.new_box = Box(x=650, y=770, width=200, height=150, next_scene=self.next_scene)
         self.boxes.append(self.new_box)
 
@@ -539,7 +546,7 @@ class CityPart4FamilyHouseBasement3Letter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.ogg')
         self.paper_sound_played = False
 
     def render(self, screen, inventory):
@@ -575,7 +582,7 @@ class CityPart4Cave1Letter(Node):
         self.boxes = [
             Box(x=0, y=0, width=1500, height=1024, next_scene=None)
         ]
-        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.mp3')
+        self.paper_sound = pygame.mixer.Sound('../assets/sounds/paper_collect.ogg')
         self.paper_sound_played = False
 
     def render(self, screen, inventory):
@@ -589,7 +596,7 @@ class CityPart4Cave2(Node):
     def __init__(self, background_image, next_scene):
         super().__init__(background_image)
         self.doom_sound_played = False
-        self.doom_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/doom.mp3')
+        self.doom_sound = pygame.mixer.Sound('../assets/sounds/citypart4room/doom.ogg')
         self.flicker_duration = 2000
         self.flicker_interval = 30  # Time between flickers in ms
         self.flicker_start_time = None
@@ -779,7 +786,7 @@ class CityPart5ApartmentsRoomSuitcase(Node):
             Box(x=80, y=440, width=200, height=250, next_scene=None)
         ]
         self.dialogue_started = False
-        self.phone_sound = pygame.mixer.Sound('../assets/sounds/citypart5room/sms_arrived.mp3')
+        self.phone_sound = pygame.mixer.Sound('../assets/sounds/citypart5room/sms_arrived.ogg')
 
         self.objects = [
             GameObject(name="Busticket", image_path="../assets/images/scenes/location5/png/ticket.png", x=540, y=300,
@@ -884,7 +891,7 @@ class CityPart5BusStation(Node):
         self.dialogue_finished = False
         self.next_scene = next_scene
         self.new_box = None
-        self.bus_arrival_sound = pygame.mixer.Sound('../assets/sounds/bus_arrival.mp3')
+        self.bus_arrival_sound = pygame.mixer.Sound('../assets/sounds/bus_arrival.ogg')
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
@@ -960,7 +967,7 @@ class CityPart5BusInside(Node):
         self.ticket_used = False
         self.dialogue_started = False
         self.dialogue_finished = False
-        self.beep_sound = pygame.mixer.Sound('../assets/sounds/beep_for_ticket.mp3')
+        self.beep_sound = pygame.mixer.Sound('../assets/sounds/beep_for_ticket.ogg')
 
     def use_busticket(self):
         self.ticket_used = True
@@ -1003,7 +1010,7 @@ class BusDriver(Node):
         self.glitch_start_time = None
         self.glitching = False
         self.glitch_frames = self.create_glitch_effect()
-        self.glitch_sound = pygame.mixer.Sound('../assets/sounds/glitch_sound.mp3')
+        self.glitch_sound = pygame.mixer.Sound('../assets/sounds/glitch_sound.ogg')
         self.fade_alpha = 0  # Used for fade-out effect
         self.fading_out = False
         self.text_y = 1080  # Start position for scrolling text
@@ -1032,10 +1039,20 @@ class BusDriver(Node):
         """Generate distorted glitch frames by shifting and inverting colors."""
         glitch_frames = []
         for i in range(5):  # Generate multiple frames for variation
+            # Invert colors in one channel. Done with blend modes instead of
+            # surfarray, which needs numpy (not worth the extra download in the browser).
+            channel = [0, 0, 0]
+            channel[i % 3] = 255
+            others = [255 - c for c in channel]
+            size = self.background_image.get_size()
+
+            inverted = pygame.Surface(size)
+            inverted.fill(channel)  # 255 in this channel, 0 elsewhere
+            inverted.blit(self.background_image, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
+
             glitched = self.background_image.copy()
-            arr = pygame.surfarray.pixels3d(glitched)
-            arr[:, :, (i % 3)] = 255 - arr[:, :, (i % 3)]  # Invert colors in one channel
-            del arr
+            glitched.fill(others, special_flags=pygame.BLEND_RGB_MULT)  # clear this channel
+            glitched.blit(inverted, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
             glitch_frames.append(glitched)
         return glitch_frames
 
@@ -1264,6 +1281,10 @@ class BusDriver(Node):
 
         self.text_y -= 0.6  # Scroll effect
         if self.text_y < -len(text_lines) * 60:
+            # In the browser there is no window to close, so just stay on the black screen
+            if sys.platform == "emscripten":
+                self.text_y = -len(text_lines) * 60
+                return
             pygame.quit()
             sys.exit()
 

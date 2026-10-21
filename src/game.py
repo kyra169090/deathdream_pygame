@@ -1,6 +1,10 @@
+import asyncio
 import pygame
 import sys
 from inventory import Inventory
+
+# True when running in the browser build (pygbag / WebAssembly)
+WEB = sys.platform == "emscripten"
 
 
 class Game:
@@ -11,8 +15,11 @@ class Game:
         self.WIDTH = 1500
         self.HEIGHT = 1024
 
-        # Real screen setup
-        self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # Real screen setup (in the browser the page scales the canvas to fit)
+        if WEB:
+            self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        else:
+            self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.real_width, self.real_height = self.window.get_size()
 
         # Virtual screen to render the game
@@ -23,7 +30,7 @@ class Game:
         # Music
         try:
             pygame.mixer.init()
-            pygame.mixer.music.load('../assets/sounds/background_music.mp3')
+            pygame.mixer.music.load('../assets/sounds/background_music.ogg')
             pygame.mixer.music.play(-1)
         except Exception as e:
             print(f"Music loading error: {e}")
@@ -34,7 +41,7 @@ class Game:
         self.inventory = Inventory()
         self.clock = pygame.time.Clock()
 
-    def run(self):
+    async def run(self):
         running = True
         selected_item = None
         hand_cursor = pygame.image.load('../assets/images/other/pointer.png')
@@ -43,6 +50,12 @@ class Game:
             delta_time = self.clock.tick(60)
             if hasattr(self.current_scene, 'update'):
                 self.current_scene.update(delta_time)
+
+            # Fire a scene's delayed action (see Node.wait)
+            pending = getattr(self.current_scene, 'pending', None)
+            if pending and pygame.time.get_ticks() >= pending[0]:
+                self.current_scene.pending = None
+                pending[1]()
 
             # Adjust mouse pos to virtual resolution
             raw_mouse_pos = pygame.mouse.get_pos()
@@ -55,9 +68,9 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and not WEB:
                     running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN and not getattr(self.current_scene, 'pending', None):
                     click_pos = (
                         event.pos[0] * self.WIDTH / self.real_width,
                         event.pos[1] * self.HEIGHT / self.real_height
@@ -112,6 +125,7 @@ class Game:
             scaled_surface = pygame.transform.scale(self.virtual_screen, (self.real_width, self.real_height))
             self.window.blit(scaled_surface, (0, 0))
             pygame.display.flip()
+            await asyncio.sleep(0)  # let the browser draw the frame
 
         pygame.quit()
         sys.exit()

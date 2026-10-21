@@ -39,6 +39,12 @@ class Node:
         self.text_rect = pygame.Rect(50, 900, 1400, 70)
         self.dialogue_queue = []
         self.show_dialogue = False
+        self.pending = None  # (time in ms, callback) set by wait()
+
+    def wait(self, ms, callback):
+        """Run callback after ms milliseconds without freezing the game loop
+        (pygame.time.delay would freeze the browser tab). Clicks are ignored until then."""
+        self.pending = (pygame.time.get_ticks() + ms, callback)
 
     def update(self, delta_time):
         pass
