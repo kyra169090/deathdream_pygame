@@ -1016,6 +1016,29 @@ class BusDriver(Node):
         self.text_y = 1080  # Start position for scrolling text
         self.fade_complete = False  # Track when fade is finished
 
+        # Credits assets are loaded once, not every frame.
+        self.credits_font = pygame.font.Font(None, 50)
+        self.credits_image = pygame.image.load(
+            '../assets/images/other/credits_image.png'
+        ).convert_alpha()
+
+        max_image_width = 500
+        max_image_height = 500
+        image_width, image_height = self.credits_image.get_size()
+        scale = min(
+            max_image_width / image_width,
+            max_image_height / image_height,
+            1.0,
+        )
+        if scale < 1.0:
+            self.credits_image = pygame.transform.scale(
+                self.credits_image,
+                (
+                    int(image_width * scale),
+                    int(image_height * scale),
+                ),
+            )
+
     def load_frames(self, folder):
         """Load all image frames from the folder."""
         if not os.path.exists(folder):
@@ -1181,7 +1204,7 @@ class BusDriver(Node):
 
     def display_scrolling_text(self, screen):
         """Display the creepy poem scrolling upwards."""
-        font = pygame.font.Font(None, 50)
+        font = self.credits_font
         text_color = (255, 255, 255)
         text_lines = [
                 "There is a monster in the wardrobe.",
@@ -1254,18 +1277,32 @@ class BusDriver(Node):
                 "Sound Effects: https://pixabay.com/",
                 "Game by: kyra169090 (Diána P.)",
                 "",
+                "Thanks for playing!",
+                "",
+                "__CREDITS_IMAGE__",
+                "",
                 "",
         ]
 
-        for i, line in enumerate(text_lines):
-            text_surface = font.render(line, True, text_color)
-            screen.blit(text_surface, (400, self.text_y + (i * 60)))
+        current_y = self.text_y
+
+        for line in text_lines:
+            if line == "__CREDITS_IMAGE__":
+                image_x = (screen.get_width() - self.credits_image.get_width()) // 2
+                screen.blit(self.credits_image, (image_x, current_y))
+                current_y += self.credits_image.get_height() + 60
+            else:
+                text_surface = font.render(line, True, text_color)
+                screen.blit(text_surface, (400, current_y))
+                current_y += 60
+
+        credits_height = current_y - self.text_y
 
         self.text_y -= 0.6  # Scroll effect
-        if self.text_y < -len(text_lines) * 60:
+        if self.text_y < -credits_height:
             # In the browser there is no window to close, so just stay on the black screen
             if sys.platform == "emscripten":
-                self.text_y = -len(text_lines) * 60
+                self.text_y = -credits_height
                 return
             pygame.quit()
             sys.exit()
