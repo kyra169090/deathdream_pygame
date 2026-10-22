@@ -1277,8 +1277,6 @@ class BusDriver(Node):
                 "Sound Effects: https://pixabay.com/",
                 "Game by: kyra169090 (Diána P.)",
                 "",
-                "Thanks for playing!",
-                "",
                 "__CREDITS_IMAGE__",
                 "",
                 "",
