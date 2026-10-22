@@ -9,27 +9,35 @@ WEB = sys.platform == "emscripten"
 
 class Game:
     def __init__(self):
+        # Give the browser audio thread more headroom. A larger mixer buffer
+        # trades a tiny amount of latency for much more stable WebAssembly audio.
+        pygame.mixer.pre_init(
+            frequency=44100,
+            size=-16,
+            channels=2,
+            buffer=4096,
+        )
         pygame.init()
 
         # Internal fixed resolution (virtual screen)
         self.WIDTH = 1500
         self.HEIGHT = 1024
 
-        # Real screen setup (in the browser the page scales the canvas to fit)
+        # Real screen setup. In the browser the canvas is already the game's
+        # native resolution, so render directly to it instead of rescaling a
+        # 1500x1024 surface every frame.
         if WEB:
             self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+            self.virtual_screen = self.window
         else:
             self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+            self.virtual_screen = pygame.Surface((self.WIDTH, self.HEIGHT))
         self.real_width, self.real_height = self.window.get_size()
-
-        # Virtual screen to render the game
-        self.virtual_screen = pygame.Surface((self.WIDTH, self.HEIGHT))
 
         pygame.display.set_caption('Deathdream')
 
         # Music
         try:
-            pygame.mixer.init()
             pygame.mixer.music.load('../assets/sounds/background_music.ogg')
             pygame.mixer.music.play(-1)
         except Exception as e:
@@ -121,9 +129,16 @@ class Game:
             else:
                 pygame.mouse.set_visible(True)
 
-            # Scale up virtual screen to real screen
-            scaled_surface = pygame.transform.scale(self.virtual_screen, (self.real_width, self.real_height))
-            self.window.blit(scaled_surface, (0, 0))
+            # Desktop uses a virtual resolution and needs scaling. In the
+            # browser virtual_screen is the window itself, so scaling it again
+            # would waste a large amount of CPU every frame.
+            if not WEB:
+                scaled_surface = pygame.transform.scale(
+                    self.virtual_screen,
+                    (self.real_width, self.real_height),
+                )
+                self.window.blit(scaled_surface, (0, 0))
+
             pygame.display.flip()
             await asyncio.sleep(0)  # let the browser draw the frame
 

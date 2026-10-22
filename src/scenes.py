@@ -1016,6 +1016,135 @@ class BusDriver(Node):
         self.text_y = 1080  # Start position for scrolling text
         self.fade_complete = False  # Track when fade is finished
 
+        # Credits assets are loaded once, not every frame.
+        self.credits_font = pygame.font.Font(None, 50)
+        self.credits_image = pygame.image.load(
+            '../assets/images/other/credits_image.png'
+        ).convert_alpha()
+
+        max_image_width = 500
+        max_image_height = 500
+        image_width, image_height = self.credits_image.get_size()
+        scale = min(
+            max_image_width / image_width,
+            max_image_height / image_height,
+            1.0,
+        )
+        if scale < 1.0:
+            self.credits_image = pygame.transform.scale(
+                self.credits_image,
+                (
+                    int(image_width * scale),
+                    int(image_height * scale),
+                ),
+            )
+
+        # Reuse one fade overlay instead of allocating a full-screen Surface
+        # every frame during the ending.
+        self.fade_surface = pygame.Surface(self.background_image.get_size())
+        self.fade_surface.fill((0, 0, 0))
+
+        # Pre-render credits text once. Rendering ~70 font surfaces every frame
+        # is expensive in WebAssembly and can starve browser audio.
+        credits_lines = [
+                "There is a monster in the wardrobe.",
+                "It waits for me, it breathes when I breathe.",
+                "It whispers under its breath,",
+                "but when I listen, it holds its tongue.",
+                "",
+                "I told Mom and Dad, but they called me crazy.",
+                "They yelled, they slammed, they raged.",
+                '"Stop making things up!"',
+                '"Why can\'t you be like the other kids???!!!"',
+                "",
+                "I can't stand the darkness in my room.",
+                "The way it bends and stretches,",
+                "How it dances in corners...",
+                "Shadows play games with my fear...",
+                "",
+                "I told Mom and Dad, but they called me crazy.",
+                "They yelled, they slammed, they raged.",
+                '"Stop making us mad!!!"',
+                '"Why can\'t you just be normal???!!!"',
+                "",
+                "But the monster in the wardrobe is different.",
+                "I can't see it, but I know it's there.",
+                "I feel it suffering, waiting,",
+                "Grinding just too many teeth.",
+                "",
+                "My skin itches all night long.",
+                "I want to cough, but I hold it in.",
+                "I am not allowed to wake them up.",
+                "I am not allowed to be afraid.",
+                "",
+                "I can’t decide which nightmare is worse:",
+                "What I see when I close my eyes,",
+                "or what I see when I don’t.",
+                "",
+                "But today is special!",
+                "Today, it's my birthday.",
+                "Today, I get a cake.",
+                "",
+                "It looks delicious.",
+                "It tastes like dust.",
+                "You can all have it.",
+                "You like it more than me anyway.",
+                "",
+                "I hate how I am trapped in here with you.",
+                "I hope you choke on your food.",
+                "I hope you gasp and turn blue and finally disappear.",
+                "I hope I can finally be free.",
+                "",
+                "I go to my room.",
+                "I stare at the ceiling for hours.",
+                "I actually want everything to turn to ash,",
+                "It would be better for everyone, I swear",
+                "",
+                "And then...",
+                "There is a glitch.",
+                "I am a grown up now.",
+                "",
+                "I open the wardrobe.",
+                "I crawl inside.",
+                "",
+                "And now I know.",
+                "Now, it all makes sense.",
+                "",
+                "I was that something in the wardrobe.",
+                "And I’ve been waiting for me this whole time.",
+                "", "", "", "", "", "", "", "", "", "", "", "", "",
+                "Music by: Father2006 (Track: Snow Flower)",
+                "Sound Effects: https://pixabay.com/",
+                "Game by: kyra169090 (Diána P.)",
+                "",
+                "__CREDITS_IMAGE__",
+                "",
+                "",
+        ]
+
+        self.credits_layout = []
+        credits_y = 0
+        for line in credits_lines:
+            if line == "__CREDITS_IMAGE__":
+                self.credits_layout.append(
+                    ("image", self.credits_image, credits_y)
+                )
+                credits_y += self.credits_image.get_height() + 60
+            elif line:
+                text_surface = self.credits_font.render(
+                    line,
+                    True,
+                    (255, 255, 255),
+                )
+                self.credits_layout.append(
+                    ("text", text_surface, credits_y)
+                )
+                credits_y += 60
+            else:
+                credits_y += 60
+
+        self.credits_height = credits_y
+
     def load_frames(self, folder):
         """Load all image frames from the folder."""
         if not os.path.exists(folder):
@@ -1121,16 +1250,13 @@ class BusDriver(Node):
                 self.start_dialogue([
                     ("What the hell was that???!!!", (255, 255, 255)),
                     ("Ignore it.", (255, 182, 193)),
-                    ("You’re safe with me.", (255, 182, 193)),
                     ("This happens sometimes. Some of you notice it.", (255, 182, 193)),
                     ("Are you even real?", (255, 255, 255)),
                     ("Are you?", (255, 182, 193)),
                     ("...", (255, 255, 255)),
                     ("When I look outside, I can't recognize anything. It's all... blurry.", (255, 255, 255)),
                     ("Well, yeah. You’re not supposed to see the way.", (255, 182, 193)),
-                    ("Would ruin the surprise.", (255, 182, 193)),
                     ("...", (255, 255, 255)),
-                    ("Surprise?!", (255, 255, 255)),
                     ("You’re the type who would like to have control, right?", (255, 182, 193)),
                     ("That’s cute.", (255, 182, 193)),
                     ("You lost control a long time ago.", (255, 182, 193)),
@@ -1147,7 +1273,7 @@ class BusDriver(Node):
                     ("Either way, it’s time.", (255, 182, 193)),
                     ("Why do I feel like I know you?", (255, 255, 255)),
                     ("Sorry, girl, I have to drop you off now.", (255, 182, 193)),
-                    ("Close your eyes. This part is... weird.", (255, 182, 193)),
+                    ("Close your eyes.", (255, 182, 193)),
                     ("And from now on, don't be a scared little bitch", (255, 182, 193)),
                 ])
                 self.dialogue_started = True
@@ -1167,105 +1293,40 @@ class BusDriver(Node):
     def handle_fade_out(self, screen):
         """Handle the fade to black effect before displaying the scrolling text."""
         if self.fade_alpha < 255:
-            self.fade_alpha += 5  # Increase fade level gradually
-        else:
-            self.fade_complete = True  # Fade-out is complete
+            self.fade_alpha = min(255, self.fade_alpha + 5)
+            self.fade_surface.set_alpha(self.fade_alpha)
+            screen.blit(self.fade_surface, (0, 0))
+            return
 
-        fade_surface = pygame.Surface(screen.get_size())
-        fade_surface.fill((0, 0, 0))
-        fade_surface.set_alpha(self.fade_alpha)
-        screen.blit(fade_surface, (0, 0))
-
-        if self.fade_complete:
-            self.display_scrolling_text(screen)
+        self.fade_complete = True
+        screen.fill((0, 0, 0))
+        self.display_scrolling_text(screen)
 
     def display_scrolling_text(self, screen):
-        """Display the creepy poem scrolling upwards."""
-        font = pygame.font.Font(None, 50)
-        text_color = (255, 255, 255)
-        text_lines = [
-                "There is a monster in the wardrobe.",
-                "It waits for me, it breathes when I breathe.",
-                "It whispers under its breath,",
-                "but when I listen, it holds its tongue.",
-                "",
-                "I told Mom and Dad, but they called me crazy.",
-                "They yelled, they slammed, they raged.",
-                '"Stop making things up!"',
-                '"Why can\'t you be like the other kids???!!!"',
-                "",
-                "I can't stand the darkness in my room.",
-                "The way it bends and stretches,",
-                "How it dances in corners...",
-                "Shadows play games with my fear...",
-                "",
-                "I told Mom and Dad, but they called me crazy.",
-                "They yelled, they slammed, they raged.",
-                '"Stop making us mad!!!"',
-                '"Why can\'t you just be normal???!!!"',
-                "",
-                "But the monster in the wardrobe is different.",
-                "I can't see it, but I know it's there.",
-                "I feel it staring, waiting,",
-                "Smiling with too many teeth.",
-                "",
-                "My skin itches all night long.",
-                "I want to cough, but I hold it in.",
-                "I am not allowed to wake them up.",
-                "I am not allowed to be afraid.",
-                "",
-                "I can’t decide which nightmare is worse:",
-                "What I see when I close my eyes,",
-                "or what I see when I don’t.",
-                "",
-                "But today is special!",
-                "Today, it's my birthday.",
-                "Today, I get a cake.",
-                "",
-                "It looks delicious.",
-                "It tastes like dust.",
-                "You can all have it.",
-                "You like it more than me anyway.",
-                "",
-                "I hate how I am trapped in here with you.",
-                "I hope you choke on your food.",
-                "I hope you gasp and turn blue and finally disappear.",
-                "I hope I can finally be free.",
-                "",
-                "I go to my room.",
-                "I stare at the ceiling for hours.",
-                "I actually want everything to turn to ash,",
-                "It would be better for everyone, I swear",
-                "",
-                "And then...",
-                "There is a glitch.",
-                "I am a grown up now.",
-                "",
-                "I open the wardrobe.",
-                "I crawl inside.",
-                "",
-                "And now I know.",
-                "Now, it all makes sense.",
-                "",
-                "I was that something in the wardrobe.",
-                "And I’ve been waiting for me this whole time.",
-                "", "", "", "", "", "", "", "", "", "", "", "", "",
-                "Music by: Father2006 (Track: Snow Flower)",
-                "Sound Effects: https://pixabay.com/",
-                "Game by: kyra169090 (Diána P.)",
-                "",
-                "",
-        ]
+        """Display the creepy poem and credits scrolling upwards."""
+        screen_height = screen.get_height()
+        screen_width = screen.get_width()
 
-        for i, line in enumerate(text_lines):
-            text_surface = font.render(line, True, text_color)
-            screen.blit(text_surface, (400, self.text_y + (i * 60)))
+        # Only draw credits items that are currently visible. The text/image
+        # surfaces themselves were prepared once in __init__.
+        for item_type, surface, offset_y in self.credits_layout:
+            item_y = self.text_y + offset_y
 
-        self.text_y -= 0.6  # Scroll effect
-        if self.text_y < -len(text_lines) * 60:
-            # In the browser there is no window to close, so just stay on the black screen
+            if item_y > screen_height or item_y + surface.get_height() < 0:
+                continue
+
+            if item_type == "image":
+                item_x = (screen_width - surface.get_width()) // 2
+            else:
+                item_x = 400
+
+            screen.blit(surface, (item_x, item_y))
+
+        self.text_y -= 0.6
+
+        if self.text_y < -self.credits_height:
             if sys.platform == "emscripten":
-                self.text_y = -len(text_lines) * 60
+                self.text_y = -self.credits_height
                 return
             pygame.quit()
             sys.exit()
