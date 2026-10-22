@@ -225,17 +225,32 @@ class CityPart3Room(Node):
         self.breathing_sound = pygame.mixer.Sound('../assets/sounds/citypart3room/breathing_sound.ogg')
         self.break_sound = pygame.mixer.Sound('../assets/sounds/break_sound.ogg')
 
+        # Preload the key while the scene is initialized. Loading an image from
+        # disk inside a click handler can stall or fail in the browser build.
+        self.key_item = GameObject(
+            name="Key",
+            image_path="../assets/images/scenes/location3/key.png",
+            x=840,
+            y=920,
+            width=75,
+            height=25,
+        )
+
         # Flag to check if breathing sound has been played already
         self.breathing_sound_played = False
 
     def break_ceiling(self):
-        # Changing the background image
+        # Change game state first so browser audio can never block progression.
         if not self.ceiling_broken and self.changed_background_image:
-            self.break_sound.play()
+            self.ceiling_broken = True
             self.background_image = self.changed_background_image
             self.add_new_box()
             self.add_new_item_to_screen()
-            self.ceiling_broken = True
+
+            try:
+                self.break_sound.play()
+            except pygame.error as e:
+                print(f"Break sound playback error: {e}")
 
     def add_new_box(self):
         # Add the new box and set its next scene
@@ -243,9 +258,9 @@ class CityPart3Room(Node):
         self.boxes.append(self.new_box)
 
     def add_new_item_to_screen(self):
-        # Add the new box and set its next scene
-        self.new_item = GameObject(name="Key", image_path="../assets/images/scenes/location3/key.png", x=840, y=920, width=75, height=25)
-        self.objects.append(self.new_item)
+        # The key image was already loaded in __init__; only reveal it here.
+        if self.key_item not in self.objects:
+            self.objects.append(self.key_item)
 
     def render(self, screen, inventory):
         super().render(screen, inventory)
