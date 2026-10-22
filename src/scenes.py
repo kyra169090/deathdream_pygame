@@ -1122,7 +1122,7 @@ class BusDriver(Node):
                     ("What the hell was that???!!!", (255, 255, 255)),
                     ("Ignore it.", (255, 182, 193)),
                     ("You’re safe with me.", (255, 182, 193)),
-                    ("This happens sometimes. Some of you notice it. Some of you don’t.", (255, 182, 193)),
+                    ("This happens sometimes. Some of you notice it.", (255, 182, 193)),
                     ("Are you even real?", (255, 255, 255)),
                     ("Are you?", (255, 182, 193)),
                     ("...", (255, 255, 255)),
@@ -1250,14 +1250,11 @@ class BusDriver(Node):
                 "I was that something in the wardrobe.",
                 "And I’ve been waiting for me this whole time.",
                 "", "", "", "", "", "", "", "", "", "", "", "", "",
-                "Music by: Father2006",
+                "Music by: Father2006 (Track: Snow Flower)",
                 "Sound Effects: https://pixabay.com/",
                 "Game by: kyra169090 (Diána P.)",
                 "",
-                "Thanks for playing!",
                 "",
-                "",
-                "Exiting...",
         ]
 
         for i, line in enumerate(text_lines):
